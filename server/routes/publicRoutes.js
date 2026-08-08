@@ -1,0 +1,224 @@
+import express from 'express';
+import { asyncHandler } from '../lib/asyncHandler.js';
+import { config } from '../config.js';
+import { Inquiry } from '../models/Inquiry.js';
+import { Order } from '../models/Order.js';
+import { ProductListing } from '../models/ProductListing.js';
+import {
+  buildContactAutoReply,
+  buildContactEmail,
+  buildNotifyEmail,
+  buildQuoteEmail,
+  sendSystemEmail,
+} from '../services/emailService.js';
+import { calculateQuote } from '../utils/quoteEngine.js';
+import { getDemoTrackingRecord } from '../utils/trackingDemo.js';
+import {
+  contactSchema,
+  quoteCalculationSchema,
+  quoteClaimSchema,
+  retailNotifySchema,
+  trackingSchema,
+} from '../utils/validators.js';
+
+const router = express.Router();
+
+router.get('/health', (_req, res) => {
+  res.json({ status: 'ok' });
+});
+
+router.get(
+  '/listings',
+  asyncHandler(async (_req, res) => {
+    const listings = await ProductListing.find({
+      isActive: true,
+      availableQuantityTons: { $gt: 0 },
+    }).sort({ updatedAt: -1 });
+
+    res.json(listings);
+  })
+);
+
+router.post(
+  '/contact',
+  asyncHandler(async (req, res) => {
+    const payload = contactSchema.parse(req.body);
+
+    await Inquiry.create({
+      kind: 'contact',
+      name: payload.name,
+      email: payload.email,
+      phone: payload.phone,
+      enquiryType: payload.enquiryType,
+      message: payload.message,
+    });
+
+    await Promise.all([
+      sendSystemEmail({
+        to: config.emailFromAddress,
+        subject: `New contact enquiry: ${payload.enquiryType}`,
+        html: buildContactEmail(payload),
+        replyTo: payload.email,
+      }),
+      sendSystemEmail({
+        to: payload.email,
+        subject: 'We received your BioLink enquiry',
+        html: buildContactAutoReply(payload),
+      }),
+    ]);
+
+    res.status(201).json({ message: 'Your message has been sent.' });
+  })
+);
+
+router.post(
+  '/quotes/calculate',
+  asyncHandler(async (req, res) => {
+    const payload = quoteCalculationSchema.parse(req.body);
+    const quote = calculateQuote(payload);
+
+    res.status(201).json({
+      quote,
+      summary: {
+        product: payload.product,
+        volume: payload.volume,
+        pincode: payload.pincode,
+      },
+    });
+  })
+);
+
+router.post(
+  '/quotes/:quoteId/claim',
+  asyncHandler(async (req, res) => {
+    const payload = quoteClaimSchema.parse(req.body);
+    const quoteId = req.params.quoteId;
+    const draft = {
+      product: payload.product,
+      volume: payload.volume,
+      pincode: payload.pincode,
+      quote: calculateQuote(payload),
+    };
+
+    await Inquiry.create({
+      kind: 'quote_request',
+      name: payload.name,
+      email: payload.email,
+      whatsapp: payload.whatsapp,
+      product: draft.product,
+      volume: draft.volume,
+      pincode: draft.pincode,
+      quoteId,
+      quoteAmount: draft.quote.total,
+      metadata: {
+        company: payload.company || '',
+        quote: draft.quote,
+      },
+    });
+
+    await Promise.all([
+      sendSystemEmail({
+        to: payload.email,
+        subject: 'Your BioLink institutional quote',
+        html: buildQuoteEmail({
+          name: payload.name,
+          product: draft.product,
+          volume: draft.volume,
+          pincode: draft.pincode,
+          quote: draft.quote,
+        }),
+      }),
+      sendSystemEmail({
+        to: config.emailFromAddress,
+        subject: `New quote lead: ${draft.product} / ${draft.volume} MT`,
+        html: `
+          <h2>New Quote Lead</h2>
+          <p><strong>Name:</strong> ${payload.name}</p>
+          <p><strong>Email:</strong> ${payload.email}</p>
+          <p><strong>WhatsApp:</strong> ${payload.whatsapp}</p>
+          <p><strong>Product:</strong> ${draft.product}</p>
+          <p><strong>Volume:</strong> ${draft.volume} MT</p>
+          <p><strong>Pincode:</strong> ${draft.pincode}</p>
+          <p><strong>Total Quote:</strong> Rs. ${draft.quote.total.toLocaleString('en-IN')}</p>
+        `,
+        replyTo: payload.email,
+      }),
+    ]);
+
+    res.status(201).json({ message: 'Quotation sent successfully.', quote: draft.quote });
+  })
+);
+
+router.post(
+  '/retail/notify',
+  asyncHandler(async (req, res) => {
+    const payload = retailNotifySchema.parse(req.body);
+
+    await Inquiry.create({
+      kind: 'launch_notify',
+      email: payload.email,
+      productName: payload.productName,
+      metadata: {
+        productId: payload.productId,
+      },
+    });
+
+    await Promise.all([
+      sendSystemEmail({
+        to: payload.email,
+        subject: `Retail launch alert confirmed for ${payload.productName}`,
+        html: buildNotifyEmail(payload),
+      }),
+      sendSystemEmail({
+        to: config.emailFromAddress,
+        subject: `Retail notify signup: ${payload.productName}`,
+        html: `
+          <h2>Retail Launch Signup</h2>
+          <p><strong>Product:</strong> ${payload.productName}</p>
+          <p><strong>Email:</strong> ${payload.email}</p>
+        `,
+        replyTo: payload.email,
+      }),
+    ]);
+
+    res.status(201).json({ message: 'You are on the launch notification list.' });
+  })
+);
+
+router.get(
+  '/tracking/:trackingId',
+  asyncHandler(async (req, res) => {
+    const { trackingId } = trackingSchema.parse(req.params);
+    const demoRecord = getDemoTrackingRecord(trackingId);
+
+    if (demoRecord) {
+      res.json(demoRecord);
+      return;
+    }
+
+    const order = await Order.findOne({ trackingId }).populate('listingId');
+    if (!order) {
+      res.status(404).json({ message: 'Tracking ID not found.' });
+      return;
+    }
+
+    const listing = order.listingId;
+    res.json({
+      trackingId: order.trackingId,
+      product: listing?.productType || 'Bio-manure consignment',
+      volume: `${order.quantityOrderedTons} Metric Tons`,
+      origin: listing ? `${listing.plantName}, ${listing.dispatchState}` : 'Plant source unavailable',
+      destination: order.deliveryAddress,
+      status: order.deliveryStatus,
+      steps: order.trackingEvents.map((event) => ({
+        label: event.label,
+        detail: event.detail,
+        time: event.timeLabel,
+        done: event.done,
+        active: event.active,
+      })),
+    });
+  })
+);
+
+export default router;
