@@ -115,16 +115,22 @@ export function buildNotifyEmail({ productName }) {
 
 export function buildBuyerReceipt({ buyerName, listing, quantityTons, order }) {
   return `
-    <h2>Order Placed Successfully</h2>
-    <p>Dear ${buyerName}, your order has been confirmed.</p>
+    <h2>Order Confirmed — Funds Held in Escrow</h2>
+    <p>Dear ${buyerName}, your order has been confirmed and your payment is securely held in escrow.</p>
+    <p><strong>Funds will NOT be released to the supplying plant until you verify the quality of the received consignment.</strong></p>
     <ul>
       <li><strong>Tracking ID:</strong> ${order.trackingId}</li>
+      <li><strong>Status:</strong> ESCROW_HELD</li>
       <li><strong>Source Plant:</strong> ${listing.plantName}</li>
       <li><strong>Quantity:</strong> ${quantityTons} Metric Tons</li>
+      <li><strong>Manure Cost:</strong> Rs. ${order.manureCost.toLocaleString('en-IN')}</li>
+      <li><strong>Freight Cost:</strong> Rs. ${order.estimatedFreightCost.toLocaleString('en-IN')}</li>
       <li><strong>Transaction Fee:</strong> Rs. ${order.transactionFee.toLocaleString('en-IN')}</li>
       <li><strong>Total Paid:</strong> Rs. ${order.totalPaid.toLocaleString('en-IN')}</li>
     </ul>
     <p><a href="${listing.labCertificateUrl}" target="_blank" rel="noreferrer">Download the lab certificate</a></p>
+    <hr/>
+    <p style="color:#666;font-size:12px;">Once your consignment is delivered, you will receive a separate email with a secure link to confirm quality clearance or raise a dispute.</p>
   `;
 }
 
@@ -140,5 +146,58 @@ export function buildPlantNotification({ buyer, listing, quantityTons, order }) 
       <li><strong>Delivery Address:</strong> ${order.deliveryAddress}</li>
     </ul>
     <p>Ensure the dispatched batch matches this certificate URL: ${listing.labCertificateUrl}</p>
+    <hr/>
+    <p style="color:#666;font-size:12px;">Payment will be released to you ONLY after the buyer confirms quality clearance (moisture &lt;30%, batch clean).</p>
   `;
 }
+
+/**
+ * QA Clearance Email — sent to the buyer when the consignment is
+ * delivered and status moves to QA_PENDING.
+ * Contains a one-time secure link with a cryptographic token.
+ */
+export function buildQAClearanceEmail({ buyerName, trackingId, quantityTons, settleUrl }) {
+  return `
+    <h2>Quality Clearance Required</h2>
+    <p>Dear ${buyerName},</p>
+    <p>Your consignment <strong>${trackingId}</strong> (${quantityTons} MT) has been delivered at your site.</p>
+    <p>Please inspect the batch and verify the following before releasing payment:</p>
+    <ul>
+      <li>Moisture content is below 30%</li>
+      <li>Batch is free of contamination and trash</li>
+      <li>NPK values match the lab certificate</li>
+    </ul>
+    <p><strong>If the quality is satisfactory</strong>, click the button below to release funds to the supplying plant:</p>
+    <p style="text-align:center;margin:24px 0;">
+      <a href="${settleUrl}" style="display:inline-block;padding:14px 28px;background:#00ff88;color:#1a1a1a;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">
+        ✓ Confirm Quality &amp; Release Funds
+      </a>
+    </p>
+    <p><strong>If the quality is NOT satisfactory</strong>, reply to this email with details and we will initiate a dispute and hold your funds in escrow.</p>
+    <hr/>
+    <p style="color:#c00;font-size:12px;"><strong>Security Notice:</strong> This link contains a unique cryptographic token valid for 7 days. Do NOT share this link with anyone. It authorizes the release of Rs. ${(quantityTons * 2000).toLocaleString('en-IN')}+ from escrow.</p>
+  `;
+}
+
+/**
+ * Settlement Confirmation — sent to both buyer and plant when
+ * the order transitions to SETTLED and funds are released.
+ */
+export function buildSettlementConfirmEmail({ recipientName, trackingId, totalPaid, type }) {
+  const context = type === 'buyer'
+    ? 'Your payment has been released to the supplying plant. Thank you for your quality verification.'
+    : 'The buyer has confirmed quality clearance. Payment has been authorized for release to your account.';
+
+  return `
+    <h2>Settlement Complete</h2>
+    <p>Dear ${recipientName},</p>
+    <p>${context}</p>
+    <ul>
+      <li><strong>Tracking ID:</strong> ${trackingId}</li>
+      <li><strong>Amount:</strong> Rs. ${totalPaid.toLocaleString('en-IN')}</li>
+      <li><strong>Status:</strong> SETTLED ✓</li>
+    </ul>
+    <p>This transaction is now closed. Thank you for using BioLink Agritech.</p>
+  `;
+}
+

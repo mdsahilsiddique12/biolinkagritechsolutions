@@ -25,6 +25,7 @@ export const config = {
   smtpSecure: String(process.env.SMTP_SECURE || 'true').toLowerCase() === 'true',
   smtpUser: process.env.SMTP_USER,
   smtpPass: process.env.SMTP_PASS,
+  settleBaseUrl: process.env.SETTLE_BASE_URL || 'http://localhost:5173/settle',
 };
 
 export function assertCriticalConfig() {

@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: biolinkagritechsolutions-api
+    runtime: node
+    plan: starter
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: EMAIL_PROVIDER
+        sync: false
+      - key: EMAIL_FROM_NAME
+        value: BioLink Agritech
+      - key: EMAIL_FROM_ADDRESS
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: BREVO_SMTP_USER
+        sync: false
+      - key: BREVO_SMTP_KEY
+        sync: false
+      - key: SMTP_HOST
+        value: smtp-relay.brevo.com
+      - key: SMTP_PORT
+        value: 465
+      - key: SMTP_SECURE
+        value: true
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

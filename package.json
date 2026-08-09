@@ -3,12 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "vite",
     "dev:api": "node server/index.js",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "seed:db": "node server/scripts/seed.js"
   },
   "devDependencies": {
     "typescript": "~6.0.2",

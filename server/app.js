@@ -61,6 +61,34 @@ export function createApp() {
     })
   );
 
+  // ── SECURITY: Aggressive order-creation throttle ──
+  // Prevents brute-force transaction spamming and inventory exhaustion attacks.
+  // Each IP is limited to 5 order creation attempts per 15-minute window.
+  app.use(
+    '/api/orders/create',
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 5,
+      standardHeaders: true,
+      legacyHeaders: false,
+      message: { error: 'Too many transactions initiated from this IP. Please try again later.' },
+    })
+  );
+
+  // ── SECURITY: Settlement & dispute throttle ──
+  // Prevents brute-force attempts to guess QA clearance tokens.
+  // Each IP is limited to 3 settlement/dispute requests per 15-minute window.
+  app.use(
+    ['/api/orders/settle', '/api/orders/dispute'],
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 3,
+      standardHeaders: true,
+      legacyHeaders: false,
+      message: { error: 'Too many settlement attempts from this IP. Please try again later.' },
+    })
+  );
+
   app.use('/api', publicRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/orders', orderRoutes);
