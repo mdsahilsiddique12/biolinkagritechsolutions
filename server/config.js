@@ -50,7 +50,7 @@ export function assertCriticalConfig() {
     if (!config.smtpPass) missing.push('SMTP_PASS');
   }
 
-  if (!config.emailFromAddress) {
+  if (config.emailProvider !== 'console' && !config.emailFromAddress) {
     missing.push('EMAIL_FROM_ADDRESS');
   }
 

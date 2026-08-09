@@ -44,6 +44,28 @@ function createTransport() {
 }
 
 export async function getMailer() {
+  if (config.emailProvider === 'console') {
+    return {
+      sendMail: async (options) => {
+        console.log('\n============================================================');
+        console.log('📬 [DEVELOPMENT EMAIL LOG]');
+        console.log(`From:    ${options.from}`);
+        console.log(`To:      ${options.to}`);
+        console.log(`Subject: ${options.subject}`);
+        console.log('------------------------------------------------------------');
+        // Simple HTML to text converter for console readability
+        const cleanText = (options.html || '')
+          .replace(/<[^>]*>/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        console.log(cleanText.slice(0, 300) + (cleanText.length > 300 ? '...' : ''));
+        console.log('============================================================\n');
+        return { messageId: 'console-stub-id' };
+      },
+      verify: async () => true,
+    };
+  }
+
   if (!transporter) {
     transporter = createTransport();
     await transporter.verify();
@@ -60,7 +82,7 @@ export async function sendSystemEmail({ to, subject, html, replyTo }) {
   const mailer = await getMailer();
 
   await mailer.sendMail({
-    from: `"${safeHeader(config.emailFromName)}" <${safeHeader(config.emailFromAddress)}>`,
+    from: `"${safeHeader(config.emailFromName)}" <${safeHeader(config.emailFromAddress || 'noreply@localhost')}>`,
     to: safeHeader(to),
     subject: safeHeader(subject),
     html,
