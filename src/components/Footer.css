@@ -12,8 +12,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--neon-green), var(--neon-cyan), transparent);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+  background: var(--border-subtle);
 }
 
 .footer__grid {
@@ -40,7 +39,7 @@
   justify-content: center;
   background: var(--gradient-primary);
   border-radius: var(--radius-sm);
-  color: #03030a;
+  color: #ffffff;
 }
 
 .footer__logo-brand {
@@ -90,7 +89,6 @@
 .footer__social:hover {
   color: var(--neon-green);
   border-color: var(--glass-border-hover);
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.15);
 }
 
 /* Columns */
@@ -101,11 +99,12 @@
 }
 
 .footer__col-title {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--neon-green);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.05em;
   margin-bottom: var(--space-sm);
 }
 
@@ -119,7 +118,6 @@
 
 .footer__link:hover {
   color: var(--text-primary);
-  text-shadow: none;
   padding-left: 4px;
 }
 

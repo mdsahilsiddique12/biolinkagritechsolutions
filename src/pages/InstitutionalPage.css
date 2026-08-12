@@ -125,7 +125,7 @@
 
 .quote-calc__ring {
   position: absolute;
-  border: 1px solid rgba(0, 255, 136, 0.15);
+  border: 1px solid var(--glass-border);
   border-radius: 50%;
   animation: pulseGlow 2s ease-in-out infinite;
 }
@@ -164,7 +164,7 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto var(--space-md);
-  background: rgba(0, 255, 136, 0.1);
+  background: rgba(5, 150, 105, 0.08);
   border-radius: var(--radius-full);
   color: var(--neon-green);
 }
@@ -279,7 +279,7 @@
 }
 
 .inst-hub-card__status--active {
-  background: rgba(0, 255, 136, 0.1);
+  background: rgba(5, 150, 105, 0.08);
   color: var(--neon-green);
 }
 

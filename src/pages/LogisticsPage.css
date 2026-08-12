@@ -185,7 +185,7 @@
   height: 14px;
   background: var(--neon-cyan);
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--neon-cyan);
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2);
   animation: pulseGlow 1.5s ease-in-out infinite;
 }
 
@@ -201,7 +201,6 @@
 
 .timeline-step--done .timeline-step__connector {
   background: var(--neon-green);
-  box-shadow: 0 0 4px rgba(0, 255, 136, 0.3);
 }
 
 .timeline-step--active .timeline-step__connector {

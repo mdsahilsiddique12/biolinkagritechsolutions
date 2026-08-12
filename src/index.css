@@ -487,11 +487,11 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
 }
 
 .orb-green {
-  background: rgba(0, 255, 136, 0.12);
+  background: rgba(5, 150, 105, 0.08);
 }
 
 .orb-cyan {
-  background: rgba(0, 212, 255, 0.1);
+  background: rgba(15, 118, 110, 0.06);
   animation-delay: -7s;
   animation-duration: 25s;
 }
@@ -594,8 +594,8 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
-  50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.4), 0 0 80px rgba(0, 255, 136, 0.1); }
+  0%, 100% { box-shadow: 0 4px 14px rgba(5, 150, 105, 0.08); }
+  50% { box-shadow: 0 8px 30px rgba(5, 150, 105, 0.15); }
 }
 
 @keyframes typewriter {
@@ -639,8 +639,8 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
 }
 
 @keyframes borderGlow {
-  0%, 100% { border-color: rgba(0, 255, 136, 0.2); }
-  50% { border-color: rgba(0, 255, 136, 0.5); }
+  0%, 100% { border-color: rgba(5, 150, 105, 0.15); }
+  50% { border-color: rgba(5, 150, 105, 0.3); }
 }
 
 @keyframes scanline {
@@ -672,7 +672,7 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
 .spinner {
   width: 50px;
   height: 50px;
-  border: 3px solid rgba(0, 255, 136, 0.1);
+  border: 3px solid rgba(5, 150, 105, 0.12);
   border-top-color: var(--neon-green);
   border-radius: 50%;
   animation: spinSlow 0.8s linear infinite;
@@ -690,7 +690,7 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(3, 3, 10, 0.85);
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
@@ -729,7 +729,7 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
 
 .modal-close:hover {
   color: var(--neon-green);
-  background: rgba(0, 255, 136, 0.1);
+  background: rgba(5, 150, 105, 0.08);
 }
 
 /* ── Responsive ── */
@@ -774,16 +774,16 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 136, 0.2);
+  background: rgba(5, 150, 105, 0.2);
   border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 136, 0.4);
+  background: rgba(5, 150, 105, 0.4);
 }
 
 /* ── Selection Styling ── */
 ::selection {
-  background: rgba(0, 255, 136, 0.25);
+  background: rgba(5, 150, 105, 0.25);
   color: #fff;
 }

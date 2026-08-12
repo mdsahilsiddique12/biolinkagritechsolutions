@@ -120,7 +120,7 @@
   height: 16px;
   background: var(--neon-green);
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2);
 }
 
 .milestone__content {
@@ -170,7 +170,6 @@
   font-size: 2rem;
   font-weight: 800;
   color: var(--neon-green);
-  text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
   margin-bottom: var(--space-xs);
 }
 
