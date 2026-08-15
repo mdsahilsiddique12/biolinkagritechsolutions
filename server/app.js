@@ -3,7 +3,6 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
-import hpp from 'hpp';
 import authRoutes from './routes/authRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
@@ -39,7 +38,6 @@ export function createApp() {
 
   app.use(express.json({ limit: '10kb' }));
   app.use(mongoSanitize());
-  app.use(hpp());
 
   app.use(
     '/api',
