@@ -68,7 +68,10 @@ export async function getMailer() {
 
   if (!transporter) {
     transporter = createTransport();
-    await transporter.verify();
+    // Verify in background to prevent blocking serverless function cold starts
+    transporter.verify().catch((err) => {
+      console.error('❌ Mailer verification failed:', err.message);
+    });
   }
 
   return transporter;
