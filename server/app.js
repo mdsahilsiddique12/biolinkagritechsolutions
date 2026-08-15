@@ -89,6 +89,13 @@ export function createApp() {
     })
   );
 
+  app.get('/', (req, res) => res.status(200).send("Welcome to BioLink Agri - India's Premier Bio-Manure Supply Corridor."));
+  app.get('/about', (req, res) => res.status(200).json({ message: "BioLink Agri specializes in asset-light digital trade matching under small-business MSME tax-exempt status." }));
+  app.get('/institutional', (req, res) => res.status(200).send("B2B 15-Ton Bulk Ordering Desk Portal Active."));
+  app.get('/logistics', (req, res) => res.status(200).json({ rules: "All payloads utilize Gross-minus-Tare data verified at local Dharma Kanta platforms." }));
+  app.get('/contact', (req, res) => res.status(200).send("BioLink Agri contact pipeline active. Secure forms route to regional desks."));
+  app.get('/login', (req, res) => res.status(200).send("BioLink Agri Authentication System. Buyers vs. GOBARdhan Facility Managers login portals active."));
+
   app.use('/api', publicRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/orders', orderRoutes);

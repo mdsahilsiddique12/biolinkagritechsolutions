@@ -72,6 +72,62 @@ router.post(
 );
 
 router.post(
+  '/contact/submit',
+  asyncHandler(async (req, res) => {
+    const { clientName, clientEmail, subject, targetTonnage, description, companyTitle } = req.body;
+
+    if (!clientName || !clientEmail || !subject || !description) {
+      return res.status(400).json({ error: "Missing required contact fields: clientName, clientEmail, subject, description" });
+    }
+
+    await Inquiry.create({
+      kind: 'contact',
+      name: clientName,
+      email: clientEmail,
+      enquiryType: subject,
+      volume: targetTonnage ? Number(targetTonnage) : undefined,
+      message: description,
+      metadata: {
+        companyTitle: companyTitle || '',
+      }
+    });
+
+    const alertHtmlContent = `
+        <h2>New Institutional Inquiry Routed via biolinkagri.in</h2>
+        <p><b>Prospect Identity:</b> ${clientName} (${clientEmail})</p>
+        <p><b>Company/Estate Title:</b> ${companyTitle || 'N/A'}</p>
+        <p><b>Target Volumetric Scale:</b> ${targetTonnage || 'N/A'} Metric Tonnes</p>
+        <p><b>Context Category:</b> ${subject}</p>
+        <p><b>Message Content:</b> ${description}</p>
+    `;
+
+    const clientReceiptHtml = `
+        <h3>Hello ${clientName},</h3>
+        <p>Thank you for reaching out to the <b>BioLink Agri</b> procurement desk.</p>
+        <p>Your institutional bulk query regarding <b>"${subject}"</b> has been logged securely into our regional routing queue. Our supply chain allocation team will cross-reference live GOBARdhan plant inventory datasets matching your target location and dispatch an all-inclusive 15-tonne FTL quote via WhatsApp within 24 hours.</p>
+        <p>Regards,</p>
+        <p><b>BioLink Agri Support Desk</b><br/>Patna, Bihar, India<br/>🌐 biolinkagri.in</p>
+    `;
+
+    await Promise.all([
+      sendSystemEmail({
+        to: config.emailFromAddress,
+        subject: `🚨 [MARKETPLACE INQUIRY]: ${subject}`,
+        html: alertHtmlContent,
+        replyTo: clientEmail,
+      }),
+      sendSystemEmail({
+        to: clientEmail,
+        subject: "We have received your bulk agri-input request - BioLink Agri",
+        html: clientReceiptHtml,
+      }),
+    ]);
+
+    res.status(200).json({ status: "Success", message: "Inquiry processed. Verification receipts dispatched automatically." });
+  })
+);
+
+router.post(
   '/quotes/calculate',
   asyncHandler(async (req, res) => {
     const payload = quoteCalculationSchema.parse(req.body);

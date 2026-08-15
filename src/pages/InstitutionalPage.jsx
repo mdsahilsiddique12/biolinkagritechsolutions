@@ -25,9 +25,37 @@ function QuoteCalculator() {
   const [submitLabel, setSubmitLabel] = useState('Calculate All-Inclusive Quote');
   const [claimLabel, setClaimLabel] = useState('Unlock My Quotation');
 
+  const [moqWarning, setMoqWarning] = useState(false);
+  const [truckConfig, setTruckConfig] = useState('');
+
+  const handleVolumeChange = (val) => {
+    const num = Number(val);
+    setFormData((prev) => ({ ...prev, volume: val }));
+    
+    if (val === '') {
+      setMoqWarning(false);
+      setTruckConfig('');
+      return;
+    }
+
+    if (num < 15) {
+      setMoqWarning(true);
+      setTruckConfig('');
+    } else {
+      setMoqWarning(false);
+      if (num >= 15 && num < 25) {
+        setTruckConfig('6-Wheel FTL Truck (15-Ton Capacity)');
+      } else if (num >= 25 && num < 35) {
+        setTruckConfig('10-Wheel Multi-Axle Trailer (25-Ton Capacity)');
+      } else {
+        setTruckConfig('12-Wheel Heavy Multi-Axle Carrier (35+ Ton Capacity)');
+      }
+    }
+  };
+
   const handleCalculate = async (e) => {
     e.preventDefault();
-    if (!formData.product || !formData.volume || !formData.pincode) return;
+    if (!formData.product || !formData.volume || !formData.pincode || Number(formData.volume) < 15) return;
 
     setError('');
     setSubmitLabel('Calculating...');
@@ -106,20 +134,26 @@ function QuoteCalculator() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Volume Required</label>
-              <select
-                className="select-field"
+              <label className="form-label">Volume Required (Metric Tons)</label>
+              <input
+                type="number"
+                className="input-field"
+                placeholder="Enter required tonnage (min 15 MT)"
                 value={formData.volume}
-                onChange={(e) => setFormData({ ...formData, volume: e.target.value })}
+                onChange={(e) => handleVolumeChange(e.target.value)}
                 id="quote-volume"
                 required
-              >
-                <option value="">Select volume...</option>
-                <option value="15">15 Metric Tons</option>
-                <option value="25">25 Metric Tons</option>
-                <option value="50">50 Metric Tons</option>
-                <option value="100">100+ Metric Tons</option>
-              </select>
+              />
+              {moqWarning && (
+                <p className="form-error" style={{ fontSize: '0.75rem', marginTop: '0.4rem', color: '#b91c1c', fontWeight: 600 }}>
+                  ⚠️ MOQ Gate: Minimum transaction threshold is 15 Tons due to multi-axle carrier logistics.
+                </p>
+              )}
+              {truckConfig && (
+                <p className="form-hint" style={{ fontSize: '0.75rem', marginTop: '0.4rem', color: 'var(--neon-cyan)', fontWeight: 600 }}>
+                  🚛 Logistics Carrier: Optimized for {truckConfig}.
+                </p>
+              )}
             </div>
 
             <div className="form-group">
@@ -141,7 +175,7 @@ function QuoteCalculator() {
 
           {error ? <p className="form-error">{error}</p> : null}
 
-          <button type="submit" className="btn btn-primary btn-lg quote-calc__submit" id="quote-submit">
+          <button type="submit" className="btn btn-primary btn-lg quote-calc__submit" id="quote-submit" disabled={moqWarning || !formData.volume}>
             {submitLabel} <ArrowRight size={16} />
           </button>
         </form>

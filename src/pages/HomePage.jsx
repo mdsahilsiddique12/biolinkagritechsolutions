@@ -50,8 +50,8 @@ export default function HomePage() {
         <div className="hero__hud-corner hero__hud-corner--br" />
 
         <div className="hero__content container">
-          <div className="hero__badge badge">
-            <Zap size={12} /> Powered by SATAT Network
+          <div className="hero__badge badge" id="satat-badge" style={{ borderColor: 'var(--neon-cyan)', background: 'rgba(5, 150, 105, 0.08)' }}>
+            <Globe size={12} style={{ color: 'var(--neon-pink)', marginRight: '4px' }} /> Verified SATAT Plant Partner (Govt of India Initiative)
           </div>
           
           <h1 className="hero__title">
@@ -164,6 +164,64 @@ export default function HomePage() {
                 Sealed, quality-checked truckloads dispatched directly from the CBG manufacturing
                 facility to your cultivation site. Track every kilometer.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ NPK VIDEO HOOKS ═══ */}
+      <section className="section npk-hooks" id="npk-hooks">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-label">Real-Time Quality Check</span>
+            <h2 className="section-title text-glow">NPK & Moisture Lab Testing Hooks</h2>
+            <p className="section-subtitle">
+              Watch our GOBARdhan plant facility managers run real-time moisture testing and organic matter calibration.
+            </p>
+          </div>
+
+          <div className="npk-grid">
+            <div className="npk-video glass-card reveal-left">
+              <div className="video-player-mock">
+                <div className="video-overlay">
+                  <div className="play-button-glow">
+                    <div className="play-button-inner">▶</div>
+                  </div>
+                  <span className="video-length">02:15 Min</span>
+                  <span className="video-title">CBG Plant Batch Analysis - Moisture Check (Target &lt; 30%)</span>
+                </div>
+                <div className="video-placeholder-bg" />
+              </div>
+            </div>
+            
+            <div className="npk-details reveal-right">
+              <h3 className="npk-details__title">Radical Lab Integrity</h3>
+              <p className="npk-details__text">
+                Every batch of Fermented Organic Manure is analyzed for primary nutrients (Nitrogen, Phosphorus, Potassium), organic carbon content, and heavy metal limits.
+              </p>
+              
+              <ul className="npk-specs">
+                <li className="npk-spec-item">
+                  <span className="npk-spec-label">Nitrogen (N)</span>
+                  <span className="npk-spec-value">&gt; 1.5%</span>
+                </li>
+                <li className="npk-spec-item">
+                  <span className="npk-spec-label">Phosphorus (P2O5)</span>
+                  <span className="npk-spec-value">&gt; 1.0%</span>
+                </li>
+                <li className="npk-spec-item">
+                  <span className="npk-spec-label">Potassium (K2O)</span>
+                  <span className="npk-spec-value">&gt; 1.0%</span>
+                </li>
+                <li className="npk-spec-item">
+                  <span className="npk-spec-label">Moisture Content</span>
+                  <span className="npk-spec-value" style={{ color: 'var(--neon-gold)', fontWeight: 'bold' }}>&lt; 30.0% (Hard Target)</span>
+                </li>
+              </ul>
+              
+              <Link to="/institutional" className="btn btn-outline" style={{ marginTop: 'var(--space-md)' }}>
+                View Full Lab Certification Vault
+              </Link>
             </div>
           </div>
         </div>

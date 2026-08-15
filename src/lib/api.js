@@ -23,8 +23,26 @@ async function request(path, options = {}) {
 }
 
 export const api = {
+  login(payload) {
+    return request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+  register(payload) {
+    return request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
   submitContact(payload) {
     return request('/contact', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+  submitContactForm(payload) {
+    return request('/contact/submit', {
       method: 'POST',
       body: JSON.stringify(payload),
     });

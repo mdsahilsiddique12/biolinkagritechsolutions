@@ -67,6 +67,29 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Founder Bio */}
+      <section className="section about-founder" id="about-founder">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-label">Leadership</span>
+            <h2 className="section-title text-glow">Founder Profile</h2>
+          </div>
+          
+          <div className="founder-card glass-card reveal" style={{ display: 'flex', gap: '2rem', padding: '2.5rem', alignItems: 'center' }}>
+            <div className="founder-card__avatar-wrap" style={{ flexShrink: 0 }}>
+              <div className="founder-card__avatar" style={{ width: '80px', height: '80px', borderRadius: 'var(--radius-full)', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '1.8rem' }}>MS</div>
+            </div>
+            <div className="founder-card__content">
+              <h3 className="founder-card__name" style={{ fontSize: '1.4rem', color: 'var(--text-primary)', marginBottom: '0.2rem' }}>Mohammad Sahil Siddique</h3>
+              <span className="founder-card__role" style={{ display: 'block', fontSize: '0.85rem', color: 'var(--neon-cyan)', fontWeight: 600, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>Founder & Chief Sourcing Architect</span>
+              <p className="founder-card__bio" style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.7' }}>
+                Sahil founded BioLink Agri with a singular objective: to build a robust, tech-enabled digital matching corridor that links GOBARdhan Compressed Biogas (CBG) infrastructure directly with commercial cultivators. With a background in supply chain management and agricultural trade systems, Sahil oversees the operational protocols that guarantee ex-factory quality check approvals and reliable FTL logistics matching across India.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Values */}
       <section className="section about-values" id="about-values">
         <div className="container">
@@ -134,6 +157,26 @@ export default function AboutPage() {
             <div className="network-stat reveal">
               <span className="network-stat__value">100%</span>
               <span className="network-stat__label">Digital Operations</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MSME Compliance Registry */}
+      <section className="section about-compliance" id="about-compliance" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="compliance-card glass-card reveal" style={{ borderLeft: '4px solid var(--neon-gold)', padding: '2rem' }}>
+            <div className="compliance-card__header" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem' }}>
+              <Award className="compliance-card__icon" size={24} style={{ color: 'var(--neon-gold)' }} />
+              <h3 className="compliance-card__title" style={{ fontSize: '1.2rem', color: 'var(--text-primary)' }}>MSME Compliance Registry</h3>
+            </div>
+            <p className="compliance-card__text" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+              BioLink Agri operates as an asset-light digital trade matching coordinator under small-business MSME tax-exempt frameworks. In compliance with the Ministry of Micro, Small and Medium Enterprises, Government of India, all transactions, bulk dispatches, and GOBARdhan plant routing coordinates are processed ex-factory gate from nearest registered facilities under certified regulatory guidelines.
+            </p>
+            <div className="compliance-card__meta" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span className="badge badge-gold" style={{ background: 'rgba(217, 119, 6, 0.08)', color: 'var(--neon-gold)', border: '1px solid rgba(217, 119, 6, 0.2)' }}>MSME Udyam Compliant</span>
+              <span className="badge badge-cyan">Asset-Light Network</span>
+              <span className="badge" style={{ background: 'rgba(15, 23, 42, 0.04)', color: 'var(--text-secondary)' }}>Tax-Exempt Framework</span>
             </div>
           </div>
         </div>

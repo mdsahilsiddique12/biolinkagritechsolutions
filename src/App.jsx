@@ -8,6 +8,8 @@ import RetailShopPage from './pages/RetailShopPage';
 import LogisticsPage from './pages/LogisticsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import LoginPage from './pages/LoginPage';
+import { AuthProvider } from './context/AuthContext';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -29,6 +31,7 @@ function AppContent() {
         <Route path="/logistics" element={<LogisticsPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
       <Footer />
     </>
@@ -38,7 +41,9 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </BrowserRouter>
   );
 }
