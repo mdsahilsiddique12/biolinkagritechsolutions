@@ -108,6 +108,19 @@ function ProductCard({ product }) {
               required
               id={`notify-email-${product.id}`}
             />
+            {/* T&C + Privacy Policy Checkbox */}
+            <div className="form-group checkbox-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '8px', marginBottom: 'var(--space-xs)' }}>
+              <input
+                type="checkbox"
+                id={`notify-terms-${product.id}`}
+                required
+                style={{ marginTop: '2px', cursor: 'pointer' }}
+              />
+              <label htmlFor={`notify-terms-${product.id}`} className="form-label" style={{ fontSize: '0.7rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                I agree to the <a href="/terms" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Terms</a> and <a href="/privacy" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Privacy Policy</a>
+              </label>
+            </div>
+
             {error ? <p className="form-error">{error}</p> : null}
             <button
               type="submit"

@@ -173,6 +173,19 @@ function QuoteCalculator() {
             </div>
           </div>
 
+          {/* T&C + Privacy Policy Checkbox */}
+          <div className="form-group checkbox-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '8px', marginBottom: 'var(--space-md)' }}>
+            <input
+              type="checkbox"
+              id="quote-terms"
+              required
+              style={{ marginTop: '4px', cursor: 'pointer' }}
+            />
+            <label htmlFor="quote-terms" className="form-label" style={{ fontSize: '0.78rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+              I agree to the <a href="/terms" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Terms &amp; Conditions</a> and <a href="/privacy" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Privacy Policy</a>
+            </label>
+          </div>
+
           {error ? <p className="form-error">{error}</p> : null}
 
           <button type="submit" className="btn btn-primary btn-lg quote-calc__submit" id="quote-submit" disabled={moqWarning || !formData.volume}>
@@ -262,6 +275,20 @@ function QuoteCalculator() {
                     required
                   />
                 </div>
+
+                {/* T&C + Privacy Policy Checkbox */}
+                <div className="form-group checkbox-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '8px', marginBottom: 'var(--space-md)' }}>
+                  <input
+                    type="checkbox"
+                    id="lead-terms"
+                    required
+                    style={{ marginTop: '4px', cursor: 'pointer' }}
+                  />
+                  <label htmlFor="lead-terms" className="form-label" style={{ fontSize: '0.78rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                    I agree to the <a href="/terms" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Terms &amp; Conditions</a> and <a href="/privacy" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Privacy Policy</a>
+                  </label>
+                </div>
+
                 {error ? <p className="form-error">{error}</p> : null}
                 <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }} id="lead-submit">
                   {claimLabel} <ArrowRight size={16} />

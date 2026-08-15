@@ -28,7 +28,7 @@ export default function Footer() {
             <div className="footer__socials">
               <a href="#" className="footer__social" aria-label="LinkedIn"><Globe size={16} /></a>
               <a href="#" className="footer__social" aria-label="Twitter"><Send size={16} /></a>
-              <a href="mailto:contact@biolinkagri.com" className="footer__social" aria-label="Email"><Mail size={16} /></a>
+              <a href="mailto:info@biolinkagri.in" className="footer__social" aria-label="Email"><Mail size={16} /></a>
             </div>
           </div>
 
@@ -57,11 +57,15 @@ export default function Footer() {
             <h4 className="footer__col-title">Get In Touch</h4>
             <div className="footer__contact-item">
               <Mail size={14} />
-              <span>contact@biolinkagri.com</span>
+              <span>info@biolinkagri.in</span>
             </div>
             <div className="footer__contact-item">
               <Phone size={14} />
-              <span>+91 98XXX XXXXX</span>
+              <span>Calls: +91 8581868466</span>
+            </div>
+            <div className="footer__contact-item">
+              <Phone size={14} style={{ opacity: 0.7 }} />
+              <span>WhatsApp: +91 9006847527</span>
             </div>
             <div className="footer__contact-item">
               <MapPin size={14} />
@@ -79,8 +83,8 @@ export default function Footer() {
             © 2026 BioLink Agritech Solutions Pvt. Ltd. All rights reserved.
           </p>
           <div className="footer__legal">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Service</Link>
             <a href="#">FCO Compliance</a>
           </div>
         </div>

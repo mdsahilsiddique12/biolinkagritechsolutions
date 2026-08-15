@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, MapPin, Send, CheckCircle, ArrowRight, Building, Scale, ShieldAlert } from 'lucide-react';
+import { Mail, MapPin, Send, CheckCircle, ArrowRight, Building, Scale, ShieldAlert, Phone, MessageSquare } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useAnimations';
 import { api } from '../lib/api';
 import './ContactPage.css';
@@ -18,43 +18,43 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const revealRef = useScrollReveal();
+
+  useScrollReveal();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setError('');
+    setIsSubmitting(true);
 
     try {
       await api.submitContactForm({
-        ...formData,
-        targetTonnage: formData.targetTonnage ? Number(formData.targetTonnage) : undefined,
+        name: formData.clientName,
+        email: formData.clientEmail,
+        phone: formData.targetTonnage ? `${formData.targetTonnage} tons inquiry` : '',
+        enquiryType: formData.subject,
+        message: `Company: ${formData.companyTitle || 'N/A'}\nDescription: ${formData.description}`,
+        website: '',
       });
       setSubmitted(true);
     } catch (requestError) {
-      setError(requestError.message || 'Submission interrupted. Please try again.');
+      setError(requestError.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <main className="contact" ref={revealRef}>
-      <section className="contact-hero" id="contact-hero">
-        <div className="orb orb-green" style={{ width: 250, height: 250, top: '10%', right: '5%' }} />
-        <div className="container contact-hero__content">
-          <span className="badge">Get in Touch</span>
-          <h1 className="contact-hero__title">
-            Secure Sourcing & <span className="text-glow-hero">Inquiry Desk</span>
-          </h1>
-          <p className="contact-hero__subtitle">
-            Direct routing to our regional dispatch centers. Fill out the specification sheet to request FTL quotes.
-          </p>
-        </div>
-      </section>
-
-      <section className="section contact-main" id="contact-main">
+    <main className="contact-page" style={{ paddingTop: 'calc(var(--navbar-height) + var(--space-xl))' }}>
+      <section className="section">
         <div className="container">
+          <div className="section-header">
+            <span className="section-label"><Mail size={12} /> Contact Node</span>
+            <h1 className="section-title">Institutional Sourcing Portal</h1>
+            <p className="section-subtitle">
+              Initiate ex-factory dispatch allocations. Track your domestic bulk logistics pipeline.
+            </p>
+          </div>
+
           <div className="contact-grid">
             
             {/* LEFT-HAND COLUMN: Corporate Trust Markers */}
@@ -82,6 +82,32 @@ export default function ContactPage() {
                     <span className="contact-info__label">Official Inbound Email</span>
                     <a href="mailto:info@biolinkagri.in" className="contact-info__value text-glow-hover">
                       info@biolinkagri.in
+                    </a>
+                  </div>
+                </div>
+
+                {/* Call/Message Helpline */}
+                <div className="contact-info__item glass-card">
+                  <div className="contact-info__icon">
+                    <Phone size={18} />
+                  </div>
+                  <div>
+                    <span className="contact-info__label">Helpline (Calls &amp; SMS)</span>
+                    <a href="tel:+918581868466" className="contact-info__value text-glow-hover">
+                      +91 8581868466
+                    </a>
+                  </div>
+                </div>
+
+                {/* WhatsApp & Alternate */}
+                <div className="contact-info__item glass-card">
+                  <div className="contact-info__icon">
+                    <MessageSquare size={18} />
+                  </div>
+                  <div>
+                    <span className="contact-info__label">WhatsApp &amp; Alternate</span>
+                    <a href="https://wa.me/919006847527" target="_blank" rel="noreferrer" className="contact-info__value text-glow-hover">
+                      +91 9006847527
                     </a>
                   </div>
                 </div>
@@ -217,6 +243,19 @@ export default function ContactPage() {
                         required
                         id="contact-description"
                       />
+                    </div>
+
+                    {/* Required legal checkboxes */}
+                    <div className="form-group checkbox-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '8px', marginTop: 'var(--space-md)' }}>
+                      <input
+                        type="checkbox"
+                        id="contact-terms"
+                        required
+                        style={{ marginTop: '4px', cursor: 'pointer' }}
+                      />
+                      <label htmlFor="contact-terms" className="form-label" style={{ fontSize: '0.78rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                        I agree to the <a href="/terms" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Terms &amp; Conditions</a> and <a href="/privacy" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Privacy Policy</a>
+                      </label>
                     </div>
 
                     {error ? <p className="form-error">{error}</p> : null}

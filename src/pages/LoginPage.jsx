@@ -212,6 +212,21 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* T&C + Privacy Policy Checkbox (Registration only) */}
+            {!isLoginTab && (
+              <div className="form-group checkbox-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '8px', marginTop: 'var(--space-md)' }}>
+                <input
+                  type="checkbox"
+                  id="register-terms"
+                  required
+                  style={{ marginTop: '4px', cursor: 'pointer' }}
+                />
+                <label htmlFor="register-terms" className="form-label" style={{ fontSize: '0.78rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                  I agree to the <a href="/terms" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Terms &amp; Conditions</a> and <a href="/privacy" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Privacy Policy</a>
+                </label>
+              </div>
+            )}
+
             {/* Message prompts */}
             {error && (
               <div className="auth-alert auth-alert--error">
