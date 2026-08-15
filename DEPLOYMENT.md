@@ -61,8 +61,8 @@ You must set up a `.env` file in the root of the project folder. Create a new fi
 
 ```env
 PORT=5000
-MONGO_URI=mongodb+srv://mdsahilsiddique12_db_user:xDtz5GnfMGy7Mseq@biolinkagritech.vma60ea.mongodb.net/?appName=BioLinkAgritech
-JWT_SECRET=5rr43rfgwfrw3527677wugeghgfsrtre56563767267763hgwhghsttw56526
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/dbname
+JWT_SECRET=your-super-secret-jwt-token-string
 CLIENT_ORIGIN=http://localhost:5173,https://your-netlify-site.netlify.app
 VITE_API_BASE_URL=
 
@@ -107,31 +107,26 @@ Once the `.env` parameters are saved:
      npm run dev:api
      ```
 
----
+## 5. Production Hosting & Deployment Strategy (Netlify Only)
 
-## 5. Production Hosting & Deployment Strategy
+This system is configured to run entirely on **Netlify**, with the frontend assets deployed to Netlify CDN and the Express API running serverless as a Netlify Function. You do not need any separate backend hosting (like Render).
 
-This system is configured to run as an asset-light decoupled architecture:
+### Netlify Deployment Process
 
-### Frontend Hosting (Netlify)
-1. Link your GitHub repository to **Netlify**.
-2. Set the Build Command to: `npm run build`
-3. Set the Publish Directory to: `dist`
-4. In **Site Configuration** -> **Environment variables**, set:
-   - `VITE_API_BASE_URL` = `https://your-backend-api.onrender.com/api` (this must point to your live Render backend URL).
+1. **Link your repository**:
+   - Create a new site on Netlify and link it to your GitHub repository.
+   - Set the Build Command to: `npm run build`
+   - Set the Publish Directory to: `dist`
 
-### Backend Hosting (Render)
-1. Create a new Web Service on **Render** linked to your GitHub repository.
-2. Select **Node.js** as the environment runtime.
-3. Set the Start Command to: `npm run start` (which triggers `node server/index.js`).
-4. Add the environment variables in Render's **Environment** tab matching your local `.env`:
-   - `PORT` = `10000`
-   - `MONGO_URI` = `mongodb+srv://...`
-   - `JWT_SECRET` = `...`
-   - `CLIENT_ORIGIN` = `https://your-site.netlify.app`
-   - `EMAIL_PROVIDER` = `gmail`
-   - `EMAIL_FROM_ADDRESS` = `info@biolinkagri.in`
-   - `EMAIL_FROM_NAME` = `BioLink Agritech`
-   - `GMAIL_USER` = `info@biolinkagri.in`
-   - `GMAIL_APP_PASSWORD` = `your-app-password`
-   - `SETTLE_BASE_URL` = `https://your-site.netlify.app/settle`
+2. **Configure Environment Variables**:
+   Go to Netlify **Site Configuration** -> **Environment variables** and add these variables:
+   - `MONGO_URI`: (Your MongoDB Atlas connection string)
+   - `JWT_SECRET`: (Your long secure secret key)
+   - `CLIENT_ORIGIN`: (Your live Netlify URL, e.g., `https://biolinkagri.netlify.app` or your custom domain `https://biolinkagri.in`)
+   - `EMAIL_PROVIDER`: `gmail`
+   - `EMAIL_FROM_NAME`: `BioLink Agritech`
+   - `EMAIL_FROM_ADDRESS`: `info@biolinkagri.in`
+   - `GMAIL_USER`: `info@biolinkagri.in`
+   - `GMAIL_APP_PASSWORD`: (Your 16-character Google App Password)
+   - `SETTLE_BASE_URL`: (Your live URL + `/settle`, e.g., `https://biolinkagri.in/settle`)
+   - **Note on `VITE_API_BASE_URL`**: Leave this variable **empty/unset** in Netlify. When empty, the app automatically makes relative API requests to its own domain (`/api`), which redirects directly to the serverless function.
