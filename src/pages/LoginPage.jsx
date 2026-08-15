@@ -77,8 +77,8 @@ export default function LoginPage() {
         <div className="login-card glass-card">
           {/* Header */}
           <div className="login-card__header">
-            <div className="login-card__logo">
-              <ShieldCheck size={28} />
+            <div className="login-card__logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '50%', background: 'none', border: 'none', width: '56px', height: '56px', margin: '0 auto var(--space-md)' }}>
+              <img src="/logo.png" alt="BioLink Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <h2 className="login-card__title">
               BioLink Agri <span className="text-glow">Security Portal</span>

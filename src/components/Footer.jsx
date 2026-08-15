@@ -13,7 +13,9 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="footer__brand">
             <Link to="/" className="footer__logo">
-              <div className="footer__logo-icon"><Zap size={18} /></div>
+              <div className="footer__logo-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '50%', background: 'none', border: 'none', width: '32px', height: '32px' }}>
+                <img src="/logo.png" alt="BioLink Logo" className="footer__logo-img" style={{ height: '32px', width: '32px', objectFit: 'cover' }} />
+              </div>
               <div>
                 <span className="footer__logo-brand">BioLink</span>
                 <span className="footer__logo-sub">Agritech Solutions</span>

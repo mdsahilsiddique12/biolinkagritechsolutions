@@ -34,8 +34,8 @@ export default function Navbar() {
       <div className="navbar__inner container">
         {/* Logo */}
         <Link to="/" className="navbar__logo" id="nav-logo">
-          <div className="navbar__logo-icon">
-            <Zap size={20} />
+          <div className="navbar__logo-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '50%', background: 'none', border: 'none' }}>
+            <img src="/logo.png" alt="BioLink Logo" className="navbar__logo-img" style={{ height: '36px', width: '36px', objectFit: 'cover' }} />
           </div>
           <div className="navbar__logo-text">
             <span className="navbar__logo-brand">BioLink</span>
