@@ -1,8 +1,8 @@
 const PRODUCT_BASE_RATES = {
-  'solid-fom': 2850,
-  'liquid-slurry': 2750,
-  prom: 2950,
-  co2: 3050,
+  'solid-fom': 2550,
+  'liquid-slurry': 2450,
+  prom: 2650,
+  co2: 2750,
 };
 
 export function calculateQuote({ product, volume, pincode }) {
@@ -13,10 +13,10 @@ export function calculateQuote({ product, volume, pincode }) {
   const pincodeFactor = Number(String(pincode).slice(-2)) || 25;
   const freightRatePerTon = Math.round(200 + (pincodeFactor % 15) * 10);
   
-  // Delivered price per ton (clamped between 3000 and 3500)
+  // Delivered price per ton (clamped between 2700 and 2990 to keep 20 MT under 60k)
   let finalPricePerTon = basePricePerTon + freightRatePerTon;
-  if (finalPricePerTon < 3000) finalPricePerTon = 3000;
-  if (finalPricePerTon > 3500) finalPricePerTon = 3500;
+  if (finalPricePerTon < 2700) finalPricePerTon = 2700;
+  if (finalPricePerTon > 2990) finalPricePerTon = 2990;
   
   const manureCost = Math.round(tons * basePricePerTon);
   const freightCost = Math.round(tons * (finalPricePerTon - basePricePerTon));

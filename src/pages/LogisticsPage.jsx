@@ -49,41 +49,19 @@ export default function LogisticsPage() {
           <h1 className="logistics-hero__title">
             Track Your <span className="text-glow-hero">Consignment</span>
           </h1>
-          <p className="logistics-hero__subtitle">
-            Real-time tracking for all institutional dispatches. Enter your consignment ID below.
+          <p className="logistics-hero__subtitle" style={{ marginBottom: 0 }}>
+            Real-time tracking and weighbridge verification portal for institutional bulk dispatches.
           </p>
 
-          <form className="logistics-search" onSubmit={handleSearch} id="tracking-search">
-            <div className="logistics-search__icon">
-              <Search size={18} />
-            </div>
-            <input
-              type="text"
-              className="logistics-search__input"
-              placeholder="Enter Consignment ID (e.g., BL-2026-08-0847)"
-              value={trackingId}
-              onChange={(e) => setTrackingId(e.target.value)}
-              id="tracking-input"
-            />
-            <button type="submit" className="btn btn-primary logistics-search__btn" id="tracking-submit">
-              {isLoading ? 'Checking...' : 'Track'} <ArrowRight size={14} />
-            </button>
-          </form>
-
-          {error ? <p className="form-error">{error}</p> : null}
-
-          {!showTracking && (
-            <button
-              className="btn btn-ghost logistics-demo"
-              onClick={() => {
-                setTrackingId('BL-2026-08-0847');
-                void loadTracking('BL-2026-08-0847');
-              }}
-              id="tracking-demo"
-            >
-              View Demo Tracking {'->'}
-            </button>
-          )}
+          <div className="glass-card" style={{ padding: 'var(--space-xl) var(--space-2xl)', display: 'inline-block', maxWidth: '500px', margin: 'var(--space-2xl) auto 0', textAlign: 'center' }}>
+            <span style={{ display: 'inline-block', padding: '6px 12px', background: 'rgba(5, 150, 105, 0.08)', borderRadius: '30px', color: 'var(--neon-green)', fontSize: '0.72rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
+              COMING SOON
+            </span>
+            <h3 style={{ fontSize: '1.3rem', color: 'var(--text-primary)', marginBottom: '8px' }}>Real-Time Tracking Portal</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>
+              Our dynamic GPS freight coordinate tracking and verified weighbridge (Dharma Kanta) verification interface is currently undergoing system audits. Online portal access will be active shortly.
+            </p>
+          </div>
         </div>
       </section>
 

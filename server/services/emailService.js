@@ -6,7 +6,9 @@ let transporter;
 function createTransport() {
   if (config.emailProvider === 'gmail') {
     return nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
       pool: true,
       maxConnections: 3,
       auth: {
@@ -114,19 +116,92 @@ export function buildContactAutoReply({ name }) {
 }
 
 export function buildQuoteEmail({ name, product, volume, pincode, quote }) {
+  const displayProduct = String(product).replace(/-/g, ' ').toUpperCase();
   return `
-    <h2>Your Institutional Quote Is Ready</h2>
-    <p>Hello ${name}, here is your requested quote summary.</p>
-    <ul>
-      <li><strong>Product:</strong> ${product}</li>
-      <li><strong>Volume:</strong> ${volume} Metric Tons</li>
-      <li><strong>Pincode:</strong> ${pincode}</li>
-      <li><strong>Manure Cost:</strong> Rs. ${quote.manureCost.toLocaleString('en-IN')}</li>
-      <li><strong>Freight Cost:</strong> Rs. ${quote.freightCost.toLocaleString('en-IN')}</li>
-      <li><strong>Handling Fee:</strong> Rs. ${quote.handlingFee.toLocaleString('en-IN')}</li>
-      <li><strong>Total:</strong> Rs. ${quote.total.toLocaleString('en-IN')}</li>
-    </ul>
-    <p>Our institutional team will follow up on WhatsApp shortly.</p>
+<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background-color:#f4f6f5;font-family:Arial,sans-serif;color:#25352d;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f5;padding:30px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(7,93,53,0.08);">
+          <!-- HEADER -->
+          <tr style="background-color:#075d35;">
+            <td style="padding:20px 30px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="55">
+                    <img src="https://biolinkagri.in/logo.png" width="48" height="48" alt="BioLink" style="display:block;border-radius:8px;background-color:#ffffff;border:0;">
+                  </td>
+                  <td style="padding-left:15px;vertical-align:middle;">
+                    <div style="font-size:20px;font-weight:bold;color:#ffffff;line-height:1.2;">BioLink Agritech</div>
+                    <div style="font-size:9px;color:#d8f0e1;letter-spacing:1px;margin-top:3px;text-transform:uppercase;">Circular Agricultural Inputs • Institutional B2B</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- CONTENT -->
+          <tr>
+            <td style="padding:40px 35px;">
+              <h2 style="font-size:22px;color:#075d35;margin-top:0;margin-bottom:15px;font-weight:bold;">Your Institutional Quote is Ready</h2>
+              <p style="font-size:15px;line-height:1.6;color:#333333;margin-bottom:20px;">Dear ${name},</p>
+              <p style="font-size:15px;line-height:1.6;color:#333333;margin-bottom:25px;">Thank you for using the BioLink Instant Quote Engine. We have processed your bulk supply inquiry for <strong>${displayProduct}</strong> matching pincode <strong>${pincode}</strong>.</p>
+              
+              <!-- PRICING SUMMARY -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5faf6;border:1px solid #d1ebd8;border-radius:8px;padding:20px;margin-bottom:25px;">
+                <tr>
+                  <td style="padding-bottom:10px;font-size:14px;color:#555555;">Product Quantity:</td>
+                  <td align="right" style="padding-bottom:10px;font-weight:bold;font-size:14px;color:#25352d;">${volume} Metric Tons (MT)</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:10px;font-size:14px;color:#555555;">Price of Manure (Base):</td>
+                  <td align="right" style="padding-bottom:10px;font-weight:bold;font-size:14px;color:#25352d;">Rs. ${quote.manureCost.toLocaleString('en-IN')}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:15px;font-size:14px;color:#555555;">Delivery Charges (Freight):</td>
+                  <td align="right" style="padding-bottom:15px;font-weight:bold;font-size:14px;color:#25352d;">Rs. ${quote.freightCost.toLocaleString('en-IN')}</td>
+                </tr>
+                <tr style="border-top:1px solid #d1ebd8;">
+                  <td style="padding-top:15px;font-size:14px;font-weight:bold;color:#075d35;">Delivered Price Per Ton:</td>
+                  <td align="right" style="padding-top:15px;font-weight:bold;font-size:14px;color:#075d35;">Rs. ${quote.pricePerTon.toLocaleString('en-IN')} / MT</td>
+                </tr>
+                <tr>
+                  <td style="padding-top:10px;font-size:16px;font-weight:bold;color:#075d35;">Total Estimate:</td>
+                  <td align="right" style="padding-top:10px;font-weight:bold;font-size:18px;color:#075d35;">Rs. ${quote.total.toLocaleString('en-IN')}</td>
+                </tr>
+              </table>
+
+              <div style="background-color:#fff7f0;border-left:4px solid #f0a04b;padding:12px 16px;border-radius:0 8px 8px 0;font-size:12px;color:#6e5b4b;line-height:1.5;margin-bottom:25px;">
+                <strong>*Please Note:</strong> All values are estimated and subject to change based on actual highway weighbridge clearances and dynamic logistics rates at the time of loading.
+              </div>
+
+              <p style="font-size:14px;line-height:1.6;color:#666666;">Our logistics allocation team is cross-referencing live GOBARdhan plant inventory matching your location. We will dispatch an official FTL quote via WhatsApp shortly.</p>
+              
+              <table width="100%" style="margin-top:30px;">
+                <tr>
+                  <td>
+                    <div style="font-size:14px;color:#333333;">Warm regards,</div>
+                    <div style="font-size:15px;font-weight:bold;color:#075d35;margin-top:5px;">Sahil Siddique</div>
+                    <div style="font-size:12px;color:#666666;">Founder & MD • BioLink Agri</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- FOOTER -->
+          <tr style="background-color:#1e2d24;text-align:center;">
+            <td style="padding:20px 30px;font-size:11px;color:#d8f0e1;line-height:1.6;">
+              <div>BioLink Agritech • Patna legal jurisdiction • GST Exempt (Micro Bio-Manure Enterprise)</div>
+              <div style="margin-top:5px;color:#7d9e8b;">info@biolinkagri.in • +91 8581868466 • Patna, Bihar</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
   `;
 }
 
@@ -140,22 +215,98 @@ export function buildNotifyEmail({ productName }) {
 
 export function buildBuyerReceipt({ buyerName, listing, quantityTons, order }) {
   return `
-    <h2>Order Confirmed — Funds Held in Escrow</h2>
-    <p>Dear ${buyerName}, your order has been confirmed and your payment is securely held in escrow.</p>
-    <p><strong>Funds will NOT be released to the supplying plant until you verify the quality of the received consignment.</strong></p>
-    <ul>
-      <li><strong>Tracking ID:</strong> ${order.trackingId}</li>
-      <li><strong>Status:</strong> ESCROW_HELD</li>
-      <li><strong>Source Plant:</strong> ${listing.plantName}</li>
-      <li><strong>Quantity:</strong> ${quantityTons} Metric Tons</li>
-      <li><strong>Manure Cost:</strong> Rs. ${order.manureCost.toLocaleString('en-IN')}</li>
-      <li><strong>Freight Cost:</strong> Rs. ${order.estimatedFreightCost.toLocaleString('en-IN')}</li>
-      <li><strong>Transaction Fee:</strong> Rs. ${order.transactionFee.toLocaleString('en-IN')}</li>
-      <li><strong>Total Paid:</strong> Rs. ${order.totalPaid.toLocaleString('en-IN')}</li>
-    </ul>
-    <p><a href="${listing.labCertificateUrl}" target="_blank" rel="noreferrer">Download the lab certificate</a></p>
-    <hr/>
-    <p style="color:#666;font-size:12px;">Once your consignment is delivered, you will receive a separate email with a secure link to confirm quality clearance or raise a dispute.</p>
+<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background-color:#f4f6f5;font-family:Arial,sans-serif;color:#25352d;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f5;padding:30px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(7,93,53,0.08);">
+          <!-- HEADER -->
+          <tr style="background-color:#075d35;">
+            <td style="padding:20px 30px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="55">
+                    <img src="https://biolinkagri.in/logo.png" width="48" height="48" alt="BioLink" style="display:block;border-radius:8px;background-color:#ffffff;border:0;">
+                  </td>
+                  <td style="padding-left:15px;vertical-align:middle;">
+                    <div style="font-size:20px;font-weight:bold;color:#ffffff;line-height:1.2;">BioLink Agritech</div>
+                    <div style="font-size:9px;color:#d8f0e1;letter-spacing:1px;margin-top:3px;text-transform:uppercase;">Circular Agricultural Inputs • Institutional B2B</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- CONTENT -->
+          <tr>
+            <td style="padding:40px 35px;">
+              <h2 style="font-size:22px;color:#075d35;margin-top:0;margin-bottom:15px;font-weight:bold;">Order Confirmed — Funds Held in Escrow</h2>
+              <p style="font-size:15px;line-height:1.6;color:#333333;margin-bottom:20px;">Dear ${buyerName},</p>
+              <p style="font-size:15px;line-height:1.6;color:#333333;margin-bottom:20px;">We have successfully registered your bulk input order. Your payment is safely locked inside our <strong>72-hour escrow account</strong>.</p>
+              
+              <div style="background-color:#fffdf0;border:1px dashed #e8d08c;padding:15px;border-radius:8px;margin-bottom:25px;font-size:14px;line-height:1.5;color:#6b5a31;">
+                <strong>Escrow Protection Protocol:</strong> BioLink holds payment custody securely. Funds will only be released to the supplying plant after you verify moisture content (&lt;30%) and clear dispatch quality checks at your receiving site.
+              </div>
+
+              <!-- ORDER DETAILS -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5faf6;border:1px solid #d1ebd8;border-radius:8px;padding:20px;margin-bottom:25px;">
+                <tr>
+                  <td style="padding-bottom:10px;font-size:14px;color:#555555;font-weight:bold;">Order / Tracking ID:</td>
+                  <td align="right" style="padding-bottom:10px;font-weight:bold;font-size:14px;color:#075d35;">${order.trackingId}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:10px;font-size:14px;color:#555555;">Consignment Status:</td>
+                  <td align="right" style="padding-bottom:10px;font-weight:bold;font-size:14px;color:#e88a1a;">ESCROW_HELD</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:10px;font-size:14px;color:#555555;">Source Plant Partner:</td>
+                  <td align="right" style="padding-bottom:10px;font-weight:bold;font-size:14px;color:#25352d;">${listing.plantName}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:10px;font-size:14px;color:#555555;">Total Quantity:</td>
+                  <td align="right" style="padding-bottom:10px;font-weight:bold;font-size:14px;color:#25352d;">${quantityTons} Metric Tons (MT)</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:10px;font-size:14px;color:#555555;">Manure Cost:</td>
+                  <td align="right" style="padding-bottom:10px;font-weight:bold;font-size:14px;color:#25352d;">Rs. ${order.manureCost.toLocaleString('en-IN')}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:10px;font-size:14px;color:#555555;">Est. Freight Cost:</td>
+                  <td align="right" style="padding-bottom:10px;font-weight:bold;font-size:14px;color:#25352d;">Rs. ${order.estimatedFreightCost.toLocaleString('en-IN')}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom:15px;font-size:14px;color:#555555;border-bottom:1px solid #d1ebd8;">Transaction Fee:</td>
+                  <td align="right" style="padding-bottom:15px;font-weight:bold;font-size:14px;color:#25352d;border-bottom:1px solid #d1ebd8;">Rs. ${order.transactionFee.toLocaleString('en-IN')}</td>
+                </tr>
+                <tr>
+                  <td style="padding-top:15px;font-size:16px;font-weight:bold;color:#075d35;">Total Amount Paid:</td>
+                  <td align="right" style="padding-top:15px;font-weight:bold;font-size:18px;color:#075d35;">Rs. ${order.totalPaid.toLocaleString('en-IN')}</td>
+                </tr>
+              </table>
+
+              <p style="font-size:14px;line-height:1.6;color:#333333;margin-bottom:25px;">You can review the organic batch validation certificate here:<br>
+                <a href="${listing.labCertificateUrl}" target="_blank" style="display:inline-block;margin-top:10px;color:#075d35;font-weight:bold;text-decoration:underline;">Download Laboratory Batch Certificate (PDF)</a>
+              </p>
+
+              <div style="background-color:#fff7f0;border-left:4px solid #f0a04b;padding:12px 16px;border-radius:0 8px 8px 0;font-size:12px;color:#6e5b4b;line-height:1.5;margin-bottom:25px;">
+                <strong>Notice:</strong> Once your consignment is dispatched and crosses state tolls, you will receive a separate automated delivery notification containing the quality inspection release link.
+              </div>
+            </td>
+          </tr>
+          <!-- FOOTER -->
+          <tr style="background-color:#1e2d24;text-align:center;">
+            <td style="padding:20px 30px;font-size:11px;color:#d8f0e1;line-height:1.6;">
+              <div>BioLink Agritech • Patna legal jurisdiction • GST Exempt (Micro Bio-Manure Enterprise)</div>
+              <div style="margin-top:5px;color:#7d9e8b;">info@biolinkagri.in • +91 8581868466 • Patna, Bihar</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
   `;
 }
 

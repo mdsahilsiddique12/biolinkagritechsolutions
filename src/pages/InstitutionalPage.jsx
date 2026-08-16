@@ -28,6 +28,9 @@ function QuoteCalculator() {
   const [moqWarning, setMoqWarning] = useState(false);
   const [truckConfig, setTruckConfig] = useState('');
 
+  const [quoteTerms, setQuoteTerms] = useState(false);
+  const [leadTerms, setLeadTerms] = useState(false);
+
   const handleVolumeChange = (val) => {
     const num = Number(val);
     setFormData((prev) => ({ ...prev, volume: val }));
@@ -56,6 +59,10 @@ function QuoteCalculator() {
   const handleCalculate = async (e) => {
     e.preventDefault();
     if (!formData.product || !formData.volume || !formData.pincode || Number(formData.volume) < 15) return;
+    if (!quoteTerms) {
+      setError('You must agree to the Terms & Conditions and Privacy Policy to proceed.');
+      return;
+    }
 
     setError('');
     setSubmitLabel('Calculating...');
@@ -77,6 +84,10 @@ function QuoteCalculator() {
   const handleLeadSubmit = async (e) => {
     e.preventDefault();
     if (!leadData.name || !leadData.email || !leadData.whatsapp || !quoteId) return;
+    if (!leadTerms) {
+      setError('You must agree to the Terms & Conditions and Privacy Policy to proceed.');
+      return;
+    }
 
     setError('');
     setClaimLabel('Sending...');
@@ -179,6 +190,8 @@ function QuoteCalculator() {
               type="checkbox"
               id="quote-terms"
               required
+              checked={quoteTerms}
+              onChange={(e) => setQuoteTerms(e.target.checked)}
               style={{ marginTop: '4px', cursor: 'pointer' }}
             />
             <label htmlFor="quote-terms" className="form-label" style={{ fontSize: '0.78rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
@@ -227,6 +240,9 @@ function QuoteCalculator() {
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Delivery Charges (Freight): <strong style={{ color: 'var(--text-primary)' }}>Rs. {quotePreview.freightCost.toLocaleString('en-IN')}</strong></p>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', marginTop: '4px' }}>Delivered Price Per Ton: <strong style={{ color: 'var(--neon-green)' }}>Rs. {quotePreview.pricePerTon.toLocaleString('en-IN')} / MT</strong></p>
                   <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)', fontWeight: 'bold' }}>Total Estimate: <strong>Rs. {quotePreview.total.toLocaleString('en-IN')}</strong></p>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', lineHeight: '1.4', marginTop: '4px' }}>
+                    *All values are estimated and subject to change based on dynamic freight rates at the time of dispatch.
+                  </span>
                 </div>
               ) : null}
               <form onSubmit={handleLeadSubmit}>
@@ -284,6 +300,8 @@ function QuoteCalculator() {
                     type="checkbox"
                     id="lead-terms"
                     required
+                    checked={leadTerms}
+                    onChange={(e) => setLeadTerms(e.target.checked)}
                     style={{ marginTop: '4px', cursor: 'pointer' }}
                   />
                   <label htmlFor="lead-terms" className="form-label" style={{ fontSize: '0.78rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
