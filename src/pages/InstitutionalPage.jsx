@@ -222,9 +222,11 @@ function QuoteCalculator() {
                 Enter your details below to unlock the full pricing breakdown.
               </p>
               {quotePreview ? (
-                <div className="quote-calc__summary glass-card">
-                  <p>Delivered price per ton: <strong>Rs. {quotePreview.pricePerTon.toLocaleString('en-IN')}</strong></p>
-                  <p>Total estimate: <strong>Rs. {quotePreview.total.toLocaleString('en-IN')}</strong></p>
+                <div className="quote-calc__summary glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '16px', borderRadius: '8px', background: 'rgba(5, 150, 105, 0.03)', border: '1px solid var(--border-subtle)', textAlign: 'left', marginBottom: '16px' }}>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Price of Manure (Base): <strong style={{ color: 'var(--text-primary)' }}>Rs. {quotePreview.manureCost.toLocaleString('en-IN')}</strong></p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Delivery Charges (Freight): <strong style={{ color: 'var(--text-primary)' }}>Rs. {quotePreview.freightCost.toLocaleString('en-IN')}</strong></p>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', marginTop: '4px' }}>Delivered Price Per Ton: <strong style={{ color: 'var(--neon-green)' }}>Rs. {quotePreview.pricePerTon.toLocaleString('en-IN')} / MT</strong></p>
+                  <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)', fontWeight: 'bold' }}>Total Estimate: <strong>Rs. {quotePreview.total.toLocaleString('en-IN')}</strong></p>
                 </div>
               ) : null}
               <form onSubmit={handleLeadSubmit}>
