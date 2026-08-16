@@ -12,6 +12,17 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 export function createApp() {
   const app = express();
 
+  // Express 5 compatibility patch for legacy middlewares (like express-mongo-sanitize)
+  app.use((req, res, next) => {
+    Object.defineProperty(req, 'query', {
+      value: { ...req.query },
+      writable: true,
+      configurable: true,
+      enumerable: true,
+    });
+    next();
+  });
+
   app.disable('x-powered-by');
   app.set('trust proxy', 1);
 
