@@ -7,8 +7,8 @@ function createTransport() {
   if (config.emailProvider === 'gmail') {
     return nodemailer.createTransport({
       host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
+      port: 465,
+      secure: true,
       pool: true,
       maxConnections: 3,
       auth: {
