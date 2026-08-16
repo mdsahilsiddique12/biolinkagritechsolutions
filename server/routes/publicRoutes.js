@@ -109,7 +109,7 @@ router.post(
         <p><b>BioLink Agri Support Desk</b><br/>Patna, Bihar, India<br/>🌐 biolinkagri.in</p>
     `;
 
-    await Promise.all([
+    await Promise.allSettled([
       sendSystemEmail({
         to: config.emailFromAddress,
         subject: `🚨 [MARKETPLACE INQUIRY]: ${subject}`,
@@ -172,7 +172,7 @@ router.post(
       },
     });
 
-    await Promise.all([
+    await Promise.allSettled([
       sendSystemEmail({
         to: payload.email,
         subject: 'Your BioLink institutional quote',
@@ -219,7 +219,7 @@ router.post(
       },
     });
 
-    await Promise.all([
+    await Promise.allSettled([
       sendSystemEmail({
         to: payload.email,
         subject: `Retail launch alert confirmed for ${payload.productName}`,
