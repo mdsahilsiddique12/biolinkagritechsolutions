@@ -697,17 +697,20 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
   justify-content: center;
   z-index: 1000;
   animation: fadeInUp 0.3s ease;
+  overflow-y: auto;
 }
 
 .modal-content {
   background: var(--bg-surface);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: var(--space-3xl);
+  padding: var(--space-xl);
   max-width: 480px;
   width: 90%;
   position: relative;
   box-shadow: var(--shadow-neon-intense);
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .modal-close {
