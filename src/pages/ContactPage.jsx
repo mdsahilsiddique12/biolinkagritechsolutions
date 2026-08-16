@@ -19,7 +19,7 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  useScrollReveal();
+  const revealRef = useScrollReveal();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="contact-page" style={{ paddingTop: 'calc(var(--navbar-height) + var(--space-xl))' }}>
+    <main ref={revealRef} className="contact-page" style={{ paddingTop: 'calc(var(--navbar-height) + var(--space-xl))' }}>
       <section className="section">
         <div className="container">
           <div className="section-header">

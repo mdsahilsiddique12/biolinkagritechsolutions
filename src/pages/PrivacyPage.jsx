@@ -3,10 +3,10 @@ import { ShieldAlert, HelpCircle } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useAnimations';
 
 export default function PrivacyPage() {
-  useScrollReveal();
+  const revealRef = useScrollReveal();
 
   return (
-    <main className="privacy-page" style={{ paddingTop: 'calc(var(--navbar-height) + var(--space-xl))' }}>
+    <main ref={revealRef} className="privacy-page" style={{ paddingTop: 'calc(var(--navbar-height) + var(--space-xl))' }}>
       <section className="section">
         <div className="container" style={{ maxWidth: '800px' }}>
           <div className="section-header" style={{ textAlign: 'left', marginBottom: 'var(--space-xl)' }}>

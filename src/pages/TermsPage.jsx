@@ -3,10 +3,10 @@ import { ShieldCheck } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useAnimations';
 
 export default function TermsPage() {
-  useScrollReveal();
+  const revealRef = useScrollReveal();
 
   return (
-    <main className="terms-page" style={{ paddingTop: 'calc(var(--navbar-height) + var(--space-xl))' }}>
+    <main ref={revealRef} className="terms-page" style={{ paddingTop: 'calc(var(--navbar-height) + var(--space-xl))' }}>
       <section className="section">
         <div className="container" style={{ maxWidth: '800px' }}>
           <div className="section-header" style={{ textAlign: 'left', marginBottom: 'var(--space-xl)' }}>
