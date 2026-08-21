@@ -28,3 +28,9 @@
 [[edge_functions]]
   path = "/track.png"
   function = "track-email"
+
+[[redirects]]
+  from = "/track.png"
+  to = "/.netlify/edge-functions/track-email"
+  status = 200
+  force = true
