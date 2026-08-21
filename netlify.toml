@@ -15,24 +15,20 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
-[[edge_functions]]
-  path = "/track.png"
-  function = "track-email"
-
-# 1. SPECIFIC RULE FOR TRACKING PIXEL (MUST BE FIRST)
+# 1. ROUTE THE IMAGE PATH STRAIGHT TO THE SERVERLESS FUNCTION (MUST BE FIRST)
 [[redirects]]
   from = "/track.png"
-  to = "/.netlify/edge-functions/track-email"
+  to = "/.netlify/functions/track"
   status = 200
   force = true
 
-# 2. SPECIFIC RULE FOR API ENDPOINTS
+# 2. ROUTE YOUR REGULAR API ENDPOINTS
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
 
-# 3. GLOBAL FALLBACK RULE FOR SPA ROUTING (MUST BE LAST)
+# 3. ROUTE THE FALLBACK TO VITE'S COMPILED APP IN THE DIST FOLDER (MUST BE LAST)
 [[redirects]]
   from = "/*"
   to = "/index.html"
