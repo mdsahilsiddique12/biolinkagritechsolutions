@@ -15,22 +15,25 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
 [[edge_functions]]
   path = "/track.png"
   function = "track-email"
 
+# 1. SPECIFIC RULE FOR TRACKING PIXEL (MUST BE FIRST)
 [[redirects]]
   from = "/track.png"
   to = "/.netlify/edge-functions/track-email"
   status = 200
   force = true
+
+# 2. SPECIFIC RULE FOR API ENDPOINTS
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# 3. GLOBAL FALLBACK RULE FOR SPA ROUTING (MUST BE LAST)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
