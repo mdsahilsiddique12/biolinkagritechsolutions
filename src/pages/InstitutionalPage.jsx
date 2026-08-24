@@ -376,51 +376,6 @@ export default function InstitutionalPage() {
             </p>
           </div>
 
-          {/* ── Lab Report Visual Showcase ── */}
-          <div className="lab-report-showcase glass-card reveal" style={{
-            padding: 'var(--space-xl)',
-            marginBottom: 'var(--space-2xl)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 'var(--space-lg)',
-          }}>
-            <h3 style={{ color: 'var(--neon-green)', fontSize: '1.1rem', fontWeight: 700, textAlign: 'center' }}>
-              🧪 FCO 1985 Compliance — Latest Batch Testing Report
-            </h3>
-            <p style={{ color: 'var(--text-primary)', lineHeight: '1.6', textAlign: 'center', maxWidth: '640px', fontSize: '0.9rem' }}>
-              Every batch dispatched through our platform undergoes rigorous lab testing at NABL-accredited facilities. 
-              Below is a representative summary of our most recent certified test results.
-            </p>
-            <img
-              src="/lab-report.jpg"
-              alt="BioLink Agritech Solutions — Certified Organic Manure Lab Testing Report"
-              style={{
-                width: '100%',
-                maxWidth: '560px',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--glass-border)',
-                boxShadow: 'var(--shadow-card)',
-              }}
-            />
-            <div style={{
-              background: 'rgba(217, 119, 6, 0.08)',
-              border: '1px solid rgba(217, 119, 6, 0.25)',
-              borderRadius: 'var(--radius-sm)',
-              padding: 'var(--space-md)',
-              maxWidth: '600px',
-              textAlign: 'center',
-            }}>
-              <p style={{ color: 'var(--text-primary)', fontSize: '0.78rem', lineHeight: '1.6', margin: 0 }}>
-                <strong style={{ color: '#b45309' }}>⚠ DISCLAIMER:</strong> This document is a visual representation of the actual laboratory 
-                testing report prepared for informational and transparency purposes only. The original certified test report 
-                issued by the accredited laboratory cannot be shared with individual farmers or third parties due to the 
-                testing agency's confidentiality terms, intellectual property policies, and contractual non-disclosure obligations. 
-                For verification inquiries, please contact us at <strong>info@biolinkagri.in</strong>.
-              </p>
-            </div>
-          </div>
-
           <div className="inst-certs__grid stagger-children">
             {certifications.map((cert) => (
               <div key={cert.name} className="inst-cert-card glass-card reveal">
