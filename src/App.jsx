@@ -11,6 +11,7 @@ import ContactPage from './pages/ContactPage';
 import LoginPage from './pages/LoginPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
+import LabReportsPage from './pages/LabReportsPage';
 import { AuthProvider } from './context/AuthContext';
 
 function ScrollToTop() {
@@ -36,6 +37,7 @@ function AppContent() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/lab-reports" element={<LabReportsPage />} />
       </Routes>
       <Footer />
     </>

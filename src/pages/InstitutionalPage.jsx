@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Shield, Download, MapPin, CheckCircle, ArrowRight, Zap, FileText } from 'lucide-react';
 import ParticleField from '../components/ParticleField';
 import { useScrollReveal } from '../hooks/useAnimations';
@@ -374,6 +375,9 @@ export default function InstitutionalPage() {
             <p className="section-subtitle">
               Full transparency. Download our latest compliance documents and lab-verified test reports.
             </p>
+            <Link to="/lab-reports" className="btn btn-primary" style={{ marginTop: 'var(--space-md)' }}>
+              View Full Lab Reports <ArrowRight size={16} style={{ marginLeft: 6 }} />
+            </Link>
           </div>
 
           <div className="inst-certs__grid stagger-children">
