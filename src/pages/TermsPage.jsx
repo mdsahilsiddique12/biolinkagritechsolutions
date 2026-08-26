@@ -25,7 +25,7 @@ export default function TermsPage() {
             </p>
           </div>
 
-          <div className="glass-card reveal" style={{ padding: 'var(--space-2xl)', display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+          <div className="glass-card" style={{ padding: 'var(--space-2xl)', display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
 
             {/* Preamble */}
             <p style={sP}>
