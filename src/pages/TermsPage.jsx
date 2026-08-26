@@ -3,10 +3,10 @@ import { ShieldCheck } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useAnimations';
 
 /* ── reusable inline styles ── */
-const sH3 = { borderBottom: '1px solid var(--border-subtle)', paddingBottom: 'var(--space-xs)', color: 'var(--neon-green)', marginTop: 'var(--space-md)' };
-const sP  = { color: 'var(--text-primary)', lineHeight: '1.7', fontSize: '0.95rem' };
-const sUl = { paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', margin: 0, color: 'var(--text-primary)', lineHeight: '1.7', fontSize: '0.95rem' };
-const sDiv = { color: 'var(--text-primary)', lineHeight: '1.7', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.95rem' };
+const sH3 = { borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', color: '#10b981', marginTop: '20px' };
+const sP  = { color: '#0f172a', lineHeight: '1.7', fontSize: '0.95rem' };
+const sUl = { paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', margin: 0, color: '#0f172a', lineHeight: '1.7', fontSize: '0.95rem' };
+const sDiv = { color: '#0f172a', lineHeight: '1.7', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.95rem' };
 
 export default function TermsPage() {
   const revealRef = useScrollReveal();
