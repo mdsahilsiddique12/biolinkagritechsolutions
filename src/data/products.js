@@ -35,23 +35,6 @@ export const products = [
     image: null,
   },
   {
-    id: 'prom-enriched',
-    name: 'BioLink PROM Enriched',
-    shortName: 'PROM Enriched',
-    category: 'specialty',
-    description: 'Phosphate Rich Organic Manure — FOM fortified with natural rock phosphate for flowering and fruiting crops.',
-    longDescription: 'A premium blend of Fermented Organic Manure enriched with low-grade rock phosphate to deliver sustained phosphorus release. FCO-compliant and ideal for phosphorus-deficient soils.',
-    npk: 'N: 1.5% | P: 10.4% | K: 1.2%',
-    variants: [
-      { size: '10kg', price: 599, mrp: 849 },
-      { size: '25kg', price: 1349, mrp: 1899 },
-    ],
-    badge: 'Premium',
-    badgeType: 'purple',
-    features: ['High Phosphorus', 'FCO Compliant', 'Slow Release', 'Rock Phosphate'],
-    image: null,
-  },
-  {
     id: 'vermigold-blend',
     name: 'BioLink VermiGold Blend',
     shortName: 'VermiGold Blend',

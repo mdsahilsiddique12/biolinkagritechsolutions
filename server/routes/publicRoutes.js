@@ -55,7 +55,7 @@ router.post(
 
     await Promise.all([
       sendSystemEmail({
-        to: config.emailFromAddress,
+        to: 'info@biolinkagri.in',
         subject: `New contact enquiry: ${payload.enquiryType}`,
         html: buildContactEmail(payload),
         replyTo: payload.email,
@@ -111,7 +111,7 @@ router.post(
 
     await Promise.allSettled([
       sendSystemEmail({
-        to: config.emailFromAddress,
+        to: 'info@biolinkagri.in',
         subject: `🚨 [MARKETPLACE INQUIRY]: ${subject}`,
         html: alertHtmlContent,
         replyTo: clientEmail,
@@ -185,7 +185,7 @@ router.post(
         }),
       }),
       sendSystemEmail({
-        to: config.emailFromAddress,
+        to: 'info@biolinkagri.in',
         subject: `New quote lead: ${draft.product} / ${draft.volume} MT`,
         html: `
           <h2>New Quote Lead</h2>

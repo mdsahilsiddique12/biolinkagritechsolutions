@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://sitemaps.org">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://biolinkagri.in/</loc>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- Institutional Page -->
+  <url>
+    <loc>https://biolinkagri.in/institutional</loc>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Logistics Page -->
+  <url>
+    <loc>https://biolinkagri.in/logistics</loc>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Contact Page -->
+  <url>
+    <loc>https://biolinkagri.in/contact</loc>
+    <priority>0.80</priority>
+  </url>
+
+</urlset>

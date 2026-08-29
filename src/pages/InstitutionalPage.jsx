@@ -140,8 +140,6 @@ function QuoteCalculator() {
                 <option value="">Select product...</option>
                 <option value="solid-fom">Solid FOM (Granulated)</option>
                 <option value="liquid-slurry">Liquid Slurry (LFOM)</option>
-                <option value="prom">Enrichment PROM</option>
-                <option value="co2">Food-Grade CO2</option>
               </select>
             </div>
 

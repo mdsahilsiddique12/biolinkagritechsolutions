@@ -47,7 +47,6 @@ export default function Footer() {
             <h4 className="footer__col-title">Products (Coming Soon)</h4>
             <Link to="/shop" className="footer__link">Solid FOM Granules</Link>
             <Link to="/shop" className="footer__link">Liquid Booster Slurry</Link>
-            <Link to="/shop" className="footer__link">PROM Enriched</Link>
             <Link to="/shop" className="footer__link">VermiGold Blend</Link>
             <Link to="/shop" className="footer__link">Soil Revive Kit</Link>
           </div>

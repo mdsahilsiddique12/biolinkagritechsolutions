@@ -26,7 +26,7 @@ export const contactSchema = z.object({
 });
 
 export const quoteCalculationSchema = z.object({
-  product: z.enum(['solid-fom', 'liquid-slurry', 'prom', 'co2']),
+  product: z.enum(['solid-fom', 'liquid-slurry']),
   volume: z.coerce.number().min(15).max(1000),
   pincode: z.string().regex(pincodeRegex),
 });
@@ -36,7 +36,7 @@ export const quoteClaimSchema = z.object({
   email: z.email().max(180),
   whatsapp: z.string().trim().regex(indianPhoneRegex),
   company: z.string().trim().min(2).max(120).optional().or(z.literal('')),
-  product: z.enum(['solid-fom', 'liquid-slurry', 'prom', 'co2']),
+  product: z.enum(['solid-fom', 'liquid-slurry']),
   volume: z.coerce.number().min(15).max(1000),
   pincode: z.string().regex(pincodeRegex),
   website: z.string().max(0).optional(),
