@@ -1,5 +1,5 @@
 .nursery-guide-page {
-  padding-top: calc(var(--nav-height) + 2rem);
+  padding-top: 8rem;
   padding-bottom: 5rem;
   background: radial-gradient(circle at 10% 20%, rgba(5, 40, 20, 0.15) 0%, transparent 40%),
               radial-gradient(circle at 90% 80%, rgba(6, 78, 59, 0.1) 0%, transparent 45%),
