@@ -353,4 +353,381 @@
   text-transform: uppercase;
 }
 
+/* Native Manual Embedding Styling */
+.nursery-guide-native-content {
+  --paper:#F5F6EE; 
+  --paper-2:#FBFAF3; 
+  --ink:#212A1D; 
+  --ink-soft:#4B5442;
+  --forest:#1E3B2A; 
+  --forest-2:#2E5240; 
+  --soil:#7A4E2E; 
+  --soil-deep:#5B3A22;
+  --gold:#C7963C; 
+  --leaf:#6E8F45; 
+  --leaf-soft:#DCE6CC; 
+  --line:#DAD5C2; 
+  --white:#FFFFFF;
+  --red:#A8232E; 
+  --red-soft:#F7E3E0; 
+  --blue:#1E4E7A; 
+  --blue-soft:#E2ECF5;
+  
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Poppins', Arial, sans-serif;
+  line-height: 1.6;
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  padding-bottom: 2rem;
+  margin-top: 1rem;
+  animation: fadeInDown 0.4s ease-out;
+}
+
+.nursery-guide-native-content * {
+  box-sizing: border-box;
+}
+
+.nursery-guide-native-content [data-lang] {
+  display: none !important;
+}
+
+.nursery-guide-native-content [data-lang].active {
+  display: block !important;
+}
+
+.nursery-guide-native-content .hero { 
+  padding: 44px 34px 30px 34px; 
+  text-align: center; 
+}
+
+.nursery-guide-native-content .hero .eyebrow { 
+  font-size: 11px; 
+  letter-spacing: 3px; 
+  color: var(--soil); 
+  text-transform: uppercase; 
+  font-weight: 700; 
+}
+
+.nursery-guide-native-content .hero h1 { 
+  font-family: 'Lora', serif; 
+  font-size: 34px; 
+  color: var(--forest); 
+  margin: 10px 0 8px 0; 
+  line-height: 1.25; 
+}
+
+.nursery-guide-native-content .hero p { 
+  color: var(--ink-soft); 
+  font-size: 14.5px; 
+  max-width: 640px; 
+  margin: 0 auto; 
+}
+
+.nursery-guide-native-content .section { 
+  padding: 8px 34px 6px 34px; 
+  margin-top: 26px; 
+}
+
+.nursery-guide-native-content .section-title { 
+  display: flex; 
+  align-items: center; 
+  margin-bottom: 16px; 
+}
+
+.nursery-guide-native-content .section-title .num {
+  width: 34px; 
+  height: 34px; 
+  border-radius: 50%; 
+  background: var(--forest); 
+  color: #fff; 
+  font-weight: 700;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 14px; 
+  margin-right: 14px; 
+  flex: none;
+}
+
+.nursery-guide-native-content .section-title h2 { 
+  font-family: 'Lora', serif; 
+  font-size: 22px; 
+  color: var(--forest); 
+}
+
+.nursery-guide-native-content .table-wrap { 
+  border: 1px solid var(--forest); 
+  border-radius: 12px; 
+  overflow: hidden; 
+  box-shadow: 0 6px 16px rgba(30,59,42,0.08); 
+}
+
+.nursery-guide-native-content table.dose { 
+  width: 100%; 
+  border-collapse: collapse; 
+  background: #fff; 
+}
+
+.nursery-guide-native-content table.dose thead th {
+  background: var(--forest); 
+  color: #fff; 
+  font-size: 11.5px; 
+  letter-spacing: 0.4px; 
+  text-align: left;
+  padding: 12px 14px; 
+  border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.nursery-guide-native-content table.dose thead th:last-child { 
+  border-right: none; 
+}
+
+.nursery-guide-native-content table.dose tbody td { 
+  padding: 13px 14px; 
+  font-size: 13px; 
+  border-top: 1px solid var(--line); 
+  border-right: 1px solid var(--line); 
+  color: var(--ink); 
+}
+
+.nursery-guide-native-content table.dose tbody td:last-child { 
+  border-right: none; 
+}
+
+.nursery-guide-native-content table.dose tbody tr:nth-child(even) td { 
+  background: #F8F7EF; 
+}
+
+.nursery-guide-native-content table.dose tbody td.age { 
+  font-weight: 700; 
+  color: var(--forest); 
+}
+
+.nursery-guide-native-content .note-box {
+  margin-top: 16px; 
+  background: #FBF6EA; 
+  border: 1px solid var(--gold); 
+  border-left: 4px solid var(--soil);
+  border-radius: 8px; 
+  padding: 14px 18px; 
+  font-size: 12.5px; 
+  line-height: 1.65; 
+  color: var(--soil-deep);
+}
+
+.nursery-guide-native-content .note-box b { 
+  color: var(--forest); 
+}
+
+.nursery-guide-native-content .bulk-grid { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 14px; 
+}
+
+.nursery-guide-native-content .bulk-card {
+  flex: 1 1 45%; 
+  background: var(--paper-2); 
+  border: 1px solid var(--line); 
+  border-radius: 10px; 
+  padding: 16px 18px;
+}
+
+.nursery-guide-native-content .bulk-card .label { 
+  font-size: 12.5px; 
+  font-weight: 700; 
+  color: var(--forest); 
+  margin-bottom: 6px; 
+}
+
+.nursery-guide-native-content .bulk-card .amount { 
+  font-family: 'Lora', serif; 
+  font-size: 20px; 
+  color: var(--soil-deep); 
+  font-weight: 600; 
+}
+
+.nursery-guide-native-content .bulk-card .bags { 
+  font-size: 11.5px; 
+  color: var(--ink-soft); 
+  margin-top: 2px; 
+}
+
+.nursery-guide-native-content .bulk-card.highlight { 
+  background: linear-gradient(120deg,var(--forest),var(--forest-2)); 
+  border: none; 
+}
+
+.nursery-guide-native-content .bulk-card.highlight .label { 
+  color: var(--leaf-soft); 
+}
+
+.nursery-guide-native-content .bulk-card.highlight .amount { 
+  color: #fff; 
+}
+
+.nursery-guide-native-content .bulk-card.highlight .bags { 
+  color: var(--leaf-soft); 
+}
+
+.nursery-guide-native-content .step-list { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+  margin-bottom: 20px; 
+}
+
+.nursery-guide-native-content .step-item { 
+  display: flex; 
+  background: var(--paper-2); 
+  border: 1px solid var(--line); 
+  border-radius: 10px; 
+  padding: 14px 18px; 
+}
+
+.nursery-guide-native-content .step-item .snum {
+  width: 28px; 
+  height: 28px; 
+  border-radius: 50%; 
+  background: var(--gold); 
+  color: var(--forest); 
+  font-weight: 700;
+  font-size: 13px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  margin-right: 14px; 
+  flex: none;
+}
+
+.nursery-guide-native-content .step-item h4 { 
+  font-size: 14px; 
+  color: var(--forest); 
+  margin-bottom: 4px; 
+  margin-top: 0; 
+}
+
+.nursery-guide-native-content .step-item p { 
+  font-size: 12.5px; 
+  color: var(--ink-soft); 
+  margin: 0; 
+}
+
+.nursery-guide-native-content .step-item .crit { 
+  display: inline-block; 
+  margin-top: 6px; 
+  background: var(--red-soft); 
+  color: var(--red); 
+  font-size: 11px;
+  font-weight: 700; 
+  padding: 3px 10px; 
+  border-radius: 14px; 
+}
+
+.nursery-guide-native-content .figure { 
+  margin: 18px 0; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  border: 1px solid var(--line); 
+  box-shadow: 0 6px 16px rgba(30,59,42,0.08); 
+}
+
+.nursery-guide-native-content .figure img { 
+  width: 100%; 
+  display: block; 
+}
+
+.nursery-guide-native-content .figure video { 
+  width: 100%; 
+  display: block; 
+  background: #000; 
+}
+
+.nursery-guide-native-content .figure .cap { 
+  background: var(--forest); 
+  color: var(--leaf-soft); 
+  font-size: 11.5px; 
+  padding: 10px 16px; 
+}
+
+.nursery-guide-native-content .trouble-card {
+  border: 1px solid var(--line); 
+  border-radius: 14px; 
+  overflow: hidden; 
+  margin-bottom: 22px; 
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(30,59,42,0.06);
+}
+
+.nursery-guide-native-content .trouble-head {
+  display: flex; 
+  align-items: center; 
+  padding: 14px 20px; 
+  background: var(--paper-2); 
+  border-bottom: 1px solid var(--line);
+}
+
+.nursery-guide-native-content .trouble-head .letter {
+  width: 32px; 
+  height: 32px; 
+  border-radius: 8px; 
+  background: var(--red); 
+  color: #fff; 
+  font-weight: 700; 
+  font-size: 14px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  margin-right: 14px; 
+  flex: none;
+}
+
+.nursery-guide-native-content .trouble-head h3 { 
+  font-family: 'Lora', serif; 
+  font-size: 16.5px; 
+  color: var(--forest); 
+  margin: 0; 
+}
+
+.nursery-guide-native-content .trouble-body { 
+  display: flex; 
+  flex-wrap: wrap; 
+}
+
+.nursery-guide-native-content .trouble-img { 
+  flex: 1 1 320px; 
+}
+
+.nursery-guide-native-content .trouble-img img { 
+  width: 100%; 
+  height: auto; 
+  max-height: 350px; 
+  object-fit: contain; 
+  display: block; 
+  margin: 0 auto; 
+}
+
+.nursery-guide-native-content .trouble-text { 
+  flex: 2 1 420px; 
+  padding: 18px 20px; 
+}
+
+.nursery-guide-native-content .tb-row { 
+  margin-bottom: 10px; 
+}
+
+.nursery-guide-native-content .tb-row .k { 
+  font-weight: 700; 
+  color: var(--forest); 
+  font-size: 13px; 
+}
+
+.nursery-guide-native-content .tb-row .v { 
+  font-size: 13px; 
+  color: var(--ink-soft); 
+}
+
+
 
