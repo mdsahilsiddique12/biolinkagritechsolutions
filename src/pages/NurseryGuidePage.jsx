@@ -1,13 +1,61 @@
-import { useState, useRef } from 'react';
-import { Globe, BookOpen } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Globe, BookOpen, Sparkles } from 'lucide-react';
 import './NurseryGuidePage.css';
 
+const HINDI_STATES = [
+  'Delhi',
+  'Uttar Pradesh',
+  'Bihar',
+  'Madhya Pradesh',
+  'Rajasthan',
+  'Haryana',
+  'Himachal Pradesh',
+  'Chhattisgarh',
+  'Jharkhand',
+  'Uttarakhand'
+];
+
 export default function NurseryGuidePage() {
-  const [selectedLang, setSelectedLang] = useState('en');
+  const [selectedLang, setSelectedLang] = useState(() => {
+    return localStorage.getItem('nursery_lang_picked') || 'en';
+  });
+  const [showHindiPrompt, setShowHindiPrompt] = useState(false);
   const iframeRef = useRef(null);
 
-  const handleLangChange = (e) => {
-    const lang = e.target.value;
+  useEffect(() => {
+    const hasPicked = localStorage.getItem('nursery_lang_picked');
+    const hasDismissed = localStorage.getItem('nursery_hindi_dismissed');
+
+    // Only auto-detect if the user hasn't manually selected a language before
+    if (!hasPicked) {
+      fetch('https://ipapi.co/json/')
+        .then((res) => res.json())
+        .then((data) => {
+          const region = data.region;
+          if (!region) return;
+
+          // Auto-redirect rules (excluding West Bengal and others with different languages)
+          if (region === 'Maharashtra') {
+            updateLang('mr');
+            localStorage.setItem('nursery_lang_picked', 'mr');
+          } else if (region === 'Tamil Nadu') {
+            updateLang('ta');
+            localStorage.setItem('nursery_lang_picked', 'ta');
+          } else if (region === 'Gujarat') {
+            updateLang('gu');
+            localStorage.setItem('nursery_lang_picked', 'gu');
+          } else if (HINDI_STATES.includes(region) && !hasDismissed) {
+            // Hindi suggestion overlay prompt (non-locking)
+            setShowHindiPrompt(true);
+          }
+        })
+        .catch((err) => {
+          console.warn('IP location detection failed:', err);
+        });
+    }
+  }, []);
+
+  const updateLang = (lang) => {
     setSelectedLang(lang);
     if (iframeRef.current && iframeRef.current.contentWindow) {
       try {
@@ -18,6 +66,13 @@ export default function NurseryGuidePage() {
     }
   };
 
+  const handleLangChange = (e) => {
+    const lang = e.target.value;
+    updateLang(lang);
+    localStorage.setItem('nursery_lang_picked', lang);
+    setShowHindiPrompt(false);
+  };
+
   const handleIframeLoad = () => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
       try {
@@ -26,6 +81,17 @@ export default function NurseryGuidePage() {
         console.error('Error initializing language on iframe load:', err);
       }
     }
+  };
+
+  const switchToHindi = () => {
+    updateLang('hi');
+    localStorage.setItem('nursery_lang_picked', 'hi');
+    setShowHindiPrompt(false);
+  };
+
+  const dismissPrompt = () => {
+    localStorage.setItem('nursery_hindi_dismissed', 'true');
+    setShowHindiPrompt(false);
   };
 
   return (
@@ -55,7 +121,7 @@ export default function NurseryGuidePage() {
                 onChange={handleLangChange}
                 className="lang-select-dropdown"
               >
-                <option value="en">English (default)</option>
+                <option value="en">English</option>
                 <option value="mr">मराठी (Marathi)</option>
                 <option value="hi">हिन्दी (Hindi)</option>
                 <option value="gu">ગુજરાતી (Gujarati)</option>
@@ -69,6 +135,25 @@ export default function NurseryGuidePage() {
       {/* Embedded Document Frame */}
       <section className="nursery-guide-frame-sec">
         <div className="container">
+          {showHindiPrompt && (
+            <div className="hindi-prompt-banner">
+              <div className="hindi-prompt-banner__content">
+                <Sparkles size={18} className="hindi-prompt-banner__icon" />
+                <p className="hindi-prompt-banner__text">
+                  Read this manual in Hindi? / क्या आप इस मार्गदर्शिका को हिंदी में पढ़ना चाहते हैं?
+                </p>
+              </div>
+              <div className="hindi-prompt-banner__actions">
+                <button className="btn btn-primary btn-sm" onClick={switchToHindi}>
+                  Switch to हिन्दी
+                </button>
+                <button className="btn btn-outline btn-sm" onClick={dismissPrompt}>
+                  Keep English
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="nursery-guide-frame-wrapper">
             <iframe
               ref={iframeRef}
