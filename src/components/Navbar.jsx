@@ -24,7 +24,7 @@ export default function Navbar() {
     { to: '/', label: 'Home' },
     { to: '/institutional', label: 'Institutional' },
     { to: '/shop', label: 'Coming Soon' },
-    { to: '/nursery-guide', label: 'Nursery Manual' },
+    { to: '/help', label: 'Help' },
     { to: '/logistics', label: 'Track' },
     { to: '/about', label: 'About' },
     { to: '/contact', label: 'Contact' },

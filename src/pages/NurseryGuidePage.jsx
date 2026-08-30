@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Globe, BookOpen, Sparkles } from 'lucide-react';
+import { Globe, BookOpen, Sparkles, FolderLock, Leaf } from 'lucide-react';
 import './NurseryGuidePage.css';
 
 const HINDI_STATES = [
@@ -15,7 +15,15 @@ const HINDI_STATES = [
   'Uttarakhand'
 ];
 
+const TABS = [
+  { id: 'nursery', label: 'Nursery Plants', icon: BookOpen, active: true },
+  { id: 'orchards', label: 'Orchards & Fruits', icon: Leaf, active: false, desc: 'Dosage recommendations, soil preparation guide, and organic feeding cycles for Mango, Pomegranate, Citrus, and Banana crops.' },
+  { id: 'plantations', label: 'Tea & Coffee Plantations', icon: Leaf, active: false, desc: 'Specialized application guidelines for high-altitude plantation estates, soil conditioning, and organic yield optimization.' },
+  { id: 'field', label: 'Field & Vegetable Crops', icon: Leaf, active: false, desc: 'High-volume application charts for Sugarcane, Cotton, Paddy, and commercial vegetable cultivation.' }
+];
+
 export default function NurseryGuidePage() {
+  const [activeTab, setActiveTab] = useState('nursery');
   const [selectedLang, setSelectedLang] = useState(() => {
     return localStorage.getItem('nursery_lang_picked') || 'en';
   });
@@ -27,7 +35,7 @@ export default function NurseryGuidePage() {
     const hasDismissed = localStorage.getItem('nursery_hindi_dismissed');
 
     // Only auto-detect if the user hasn't manually selected a language before
-    if (!hasPicked) {
+    if (!hasPicked && activeTab === 'nursery') {
       fetch('https://ipapi.co/json/')
         .then((res) => res.json())
         .then((data) => {
@@ -53,7 +61,7 @@ export default function NurseryGuidePage() {
           console.warn('IP location detection failed:', err);
         });
     }
-  }, []);
+  }, [activeTab]);
 
   const updateLang = (lang) => {
     setSelectedLang(lang);
@@ -96,73 +104,109 @@ export default function NurseryGuidePage() {
 
   return (
     <main className="nursery-guide-page">
-      {/* Premium Header/Banner with Selector */}
+      {/* Help Center Header/Banner */}
       <section className="nursery-guide-banner">
         <div className="container nursery-guide-banner__inner">
           <div className="nursery-guide-banner__text">
             <div className="nursery-guide-banner__tag">
               <BookOpen size={14} className="icon-pulse" />
-              <span>Educational Resources</span>
+              <span>BioLink Help Desk</span>
             </div>
-            <h1 className="nursery-guide-banner__title">Nursery Application Manual</h1>
+            <h1 className="nursery-guide-banner__title">Application Manuals</h1>
             <p className="nursery-guide-banner__desc">
-              Fermented Organic Manure (FOM) correct dosage, step-by-step application method, and diagnostic troubleshooting for healthy nursery stock.
+              Access official guidelines, dosage charts, and soil management manuals tailored to your agricultural crop category.
             </p>
           </div>
-          <div className="nursery-guide-banner__control">
-            <label htmlFor="react-lang-select" className="lang-label">
-              <Globe size={16} />
-              <span>Choose Manual Language:</span>
-            </label>
-            <div className="lang-select-wrapper">
-              <select
-                id="react-lang-select"
-                value={selectedLang}
-                onChange={handleLangChange}
-                className="lang-select-dropdown"
-              >
-                <option value="en">English</option>
-                <option value="mr">मराठी (Marathi)</option>
-                <option value="hi">हिन्दी (Hindi)</option>
-                <option value="gu">ગુજરાતી (Gujarati)</option>
-                <option value="ta">தமிழ் (Tamil)</option>
-              </select>
+          {activeTab === 'nursery' && (
+            <div className="nursery-guide-banner__control">
+              <label htmlFor="react-lang-select" className="lang-label">
+                <Globe size={16} />
+                <span>Choose Manual Language:</span>
+              </label>
+              <div className="lang-select-wrapper">
+                <select
+                  id="react-lang-select"
+                  value={selectedLang}
+                  onChange={handleLangChange}
+                  className="lang-select-dropdown"
+                >
+                  <option value="en">English</option>
+                  <option value="mr">मराठी (Marathi)</option>
+                  <option value="hi">हिन्दी (Hindi)</option>
+                  <option value="gu">ગુજરાતી (Gujarati)</option>
+                  <option value="ta">தமிழ் (Tamil)</option>
+                </select>
+              </div>
             </div>
+          )}
+        </div>
+      </section>
+
+      {/* Tabs Selector Section */}
+      <section className="help-tabs-section">
+        <div className="container">
+          <div className="help-tabs-list">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`help-tab-btn ${activeTab === tab.id ? 'help-tab-btn--active' : ''}`}
+              >
+                <tab.icon size={16} />
+                <span>{tab.label}</span>
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Embedded Document Frame */}
+      {/* Content Section */}
       <section className="nursery-guide-frame-sec">
         <div className="container">
-          {showHindiPrompt && (
-            <div className="hindi-prompt-banner">
-              <div className="hindi-prompt-banner__content">
-                <Sparkles size={18} className="hindi-prompt-banner__icon" />
-                <p className="hindi-prompt-banner__text">
-                  Read this manual in Hindi? / क्या आप इस मार्गदर्शिका को हिंदी में पढ़ना चाहते हैं?
-                </p>
+          {activeTab === 'nursery' ? (
+            <>
+              {showHindiPrompt && (
+                <div className="hindi-prompt-banner">
+                  <div className="hindi-prompt-banner__content">
+                    <Sparkles size={18} className="hindi-prompt-banner__icon" />
+                    <p className="hindi-prompt-banner__text">
+                      Read this manual in Hindi? / क्या आप इस मार्गदर्शिका को हिंदी में पढ़ना चाहते हैं?
+                    </p>
+                  </div>
+                  <div className="hindi-prompt-banner__actions">
+                    <button className="btn btn-primary btn-sm" onClick={switchToHindi}>
+                      Switch to हिन्दी
+                    </button>
+                    <button className="btn btn-outline btn-sm" onClick={dismissPrompt}>
+                      Keep English
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="nursery-guide-frame-wrapper">
+                <iframe
+                  ref={iframeRef}
+                  src="/nursery-guide.html"
+                  title="BioLink FOM Nursery Application Guide"
+                  className="nursery-guide-iframe"
+                  onLoad={handleIframeLoad}
+                />
               </div>
-              <div className="hindi-prompt-banner__actions">
-                <button className="btn btn-primary btn-sm" onClick={switchToHindi}>
-                  Switch to हिन्दी
-                </button>
-                <button className="btn btn-outline btn-sm" onClick={dismissPrompt}>
-                  Keep English
-                </button>
+            </>
+          ) : (
+            <div className="locked-manual-placeholder">
+              <FolderLock size={48} className="locked-icon" />
+              <h3>Agronomy Guide Coming Soon</h3>
+              <p>
+                {TABS.find((t) => t.id === activeTab)?.desc}
+              </p>
+              <div className="locked-status-badge">
+                <Sparkles size={14} />
+                <span>Undergoing Agronomic Certification</span>
               </div>
             </div>
           )}
-
-          <div className="nursery-guide-frame-wrapper">
-            <iframe
-              ref={iframeRef}
-              src="/nursery-guide.html"
-              title="BioLink FOM Nursery Application Guide"
-              className="nursery-guide-iframe"
-              onLoad={handleIframeLoad}
-            />
-          </div>
         </div>
       </section>
     </main>

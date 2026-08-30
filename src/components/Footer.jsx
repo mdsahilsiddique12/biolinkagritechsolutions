@@ -38,7 +38,7 @@ export default function Footer() {
             <Link to="/" className="footer__link">Home</Link>
             <Link to="/institutional" className="footer__link">Institutional Supply</Link>
             <Link to="/shop" className="footer__link">Retail (Coming Soon)</Link>
-            <Link to="/nursery-guide" className="footer__link">Nursery Manual</Link>
+            <Link to="/help" className="footer__link">Help Center</Link>
             <Link to="/logistics" className="footer__link">Track Shipment</Link>
             <Link to="/about" className="footer__link">About Us</Link>
           </div>

@@ -39,7 +39,7 @@ function AppContent() {
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/lab-reports" element={<LabReportsPage />} />
-        <Route path="/nursery-guide" element={<NurseryGuidePage />} />
+        <Route path="/help" element={<NurseryGuidePage />} />
       </Routes>
       <Footer />
     </>
