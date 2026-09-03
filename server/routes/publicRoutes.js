@@ -190,6 +190,7 @@ router.post(
 );
 
 import { recordLiveBooking } from './partnerRoutes.js';
+import { processReferralAttribution } from '../services/referralService.js';
 
 router.post(
   '/quotes/:quoteId/claim',
@@ -203,15 +204,26 @@ router.post(
       quote: calculateQuote(payload),
     };
 
-    // Record referral attribution live in partner ledger
+    // Record referral attribution live in partner ledger & MongoDB tables
+    const refCodeStr = payload.referralCode || 'GROWIN01';
+    
     recordLiveBooking({
       farmerName: payload.name,
       farmerEmail: payload.email,
       farmerMobile: payload.whatsapp,
-      referralCode: payload.referralCode || 'GROWIN01',
+      referralCode: refCodeStr,
       volume: payload.volume,
       grossAmount: draft.quote.total,
       discountAmount: Number(payload.volume || 15) * 100,
+    });
+
+    await processReferralAttribution({
+      farmerName: payload.name,
+      farmerEmail: payload.email,
+      farmerMobile: payload.whatsapp,
+      referralCode: refCodeStr,
+      volume: payload.volume,
+      grossAmount: draft.quote.total,
     });
 
     await Inquiry.create({
