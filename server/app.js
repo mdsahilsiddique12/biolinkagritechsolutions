@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import authRoutes from './routes/authRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import partnerRoutes from './routes/partnerRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import { config } from './config.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
@@ -42,7 +43,7 @@ export function createApp() {
 
         callback(null, false);
       },
-      methods: ['GET', 'POST'],
+      methods: ['GET', 'POST', 'PATCH'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     })
   );
@@ -67,6 +68,18 @@ export function createApp() {
       max: 8,
       standardHeaders: true,
       legacyHeaders: false,
+    })
+  );
+
+  // ── Partner login throttle ──
+  app.use(
+    '/api/partners/login',
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 5,
+      standardHeaders: true,
+      legacyHeaders: false,
+      message: { error: 'Too many login attempts. Please try again later.' },
     })
   );
 
@@ -108,6 +121,7 @@ export function createApp() {
   app.use('/api', publicRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/orders', orderRoutes);
+  app.use('/api/partners', partnerRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

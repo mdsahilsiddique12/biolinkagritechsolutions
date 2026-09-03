@@ -29,6 +29,7 @@ export const quoteCalculationSchema = z.object({
   product: z.enum(['solid-fom', 'liquid-slurry']),
   volume: z.coerce.number().min(15).max(1000),
   pincode: z.string().regex(pincodeRegex),
+  referralCode: z.string().trim().min(2).max(30).optional().or(z.literal('')),
 });
 
 export const quoteClaimSchema = z.object({
@@ -39,6 +40,7 @@ export const quoteClaimSchema = z.object({
   product: z.enum(['solid-fom', 'liquid-slurry']),
   volume: z.coerce.number().min(15).max(1000),
   pincode: z.string().regex(pincodeRegex),
+  referralCode: z.string().trim().min(2).max(30).optional().or(z.literal('')),
   website: z.string().max(0).optional(),
 });
 
@@ -67,6 +69,7 @@ export const orderSchema = z.object({
   }).max(10000),
   distanceKm: z.coerce.number().min(1).max(5000),
   deliveryAddress: z.string().trim().min(10).max(280),
+  referralCode: z.string().trim().min(2).max(30).optional().or(z.literal('')),
 });
 
 /**
@@ -98,3 +101,20 @@ export const statusTransitionSchema = z.object({
   orderId: z.string().trim().min(8).max(50),
   nextStatus: z.enum(['DISPATCHED', 'QA_PENDING']),
 });
+
+// ─── Partner Schemas ──────────────────────────────────────────────
+
+export const partnerLoginSchema = z.object({
+  email: z.email().max(180),
+  password: z.string().min(8).max(100),
+});
+
+export const partnerPasswordChangeSchema = z.object({
+  currentPassword: z.string().min(8).max(100),
+  newPassword: z.string().min(8).max(100),
+});
+
+export const referralCodeValidationSchema = z.object({
+  code: z.string().trim().min(2).max(30),
+});
+

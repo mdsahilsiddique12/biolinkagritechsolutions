@@ -4,6 +4,7 @@ import { config } from '../config.js';
 import { Inquiry } from '../models/Inquiry.js';
 import { Order } from '../models/Order.js';
 import { ProductListing } from '../models/ProductListing.js';
+import { ReferralCode } from '../models/ReferralCode.js';
 import {
   buildContactAutoReply,
   buildContactEmail,
@@ -133,8 +134,41 @@ router.post(
     const payload = quoteCalculationSchema.parse(req.body);
     const quote = calculateQuote(payload);
 
+    // ── Referral discount calculation (server-side only) ──
+    let referralInfo = null;
+    if (payload.referralCode) {
+      const code = payload.referralCode.trim().toUpperCase();
+      const refCode = await ReferralCode.findOne({ code, active: true })
+        .populate('partnerId', 'name company status')
+        .lean();
+
+      if (refCode && refCode.partnerId && refCode.partnerId.status === 'active') {
+        let discountAmount = 0;
+        const tons = Number(payload.volume);
+
+        if (refCode.discountType === 'fixed_per_mt') {
+          discountAmount = Math.round(refCode.discountValue * tons);
+        } else if (refCode.discountType === 'percentage_of_net') {
+          discountAmount = Math.round(quote.total * (refCode.discountValue / 100));
+        } else if (refCode.discountType === 'flat') {
+          discountAmount = Math.round(refCode.discountValue);
+        }
+
+        referralInfo = {
+          code: refCode.code,
+          partnerName: refCode.partnerId.name,
+          company: refCode.partnerId.company || '',
+          discountType: refCode.discountType,
+          discountValue: refCode.discountValue,
+          discountAmount,
+          finalTotal: quote.total - discountAmount,
+        };
+      }
+    }
+
     res.status(201).json({
       quote,
+      referral: referralInfo,
       summary: {
         product: payload.product,
         volume: payload.volume,

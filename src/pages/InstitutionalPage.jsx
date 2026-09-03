@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Shield, Download, MapPin, CheckCircle, ArrowRight, Zap, FileText } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Shield, Download, MapPin, CheckCircle, ArrowRight, Zap, FileText, Gift, Handshake } from 'lucide-react';
 import ParticleField from '../components/ParticleField';
 import { useScrollReveal } from '../hooks/useAnimations';
 import { certifications, supplyHubs } from '../data/testimonials';
@@ -8,12 +8,23 @@ import { api } from '../lib/api';
 import './InstitutionalPage.css';
 
 function QuoteCalculator() {
+  const [searchParams] = useSearchParams();
+
   const [step, setStep] = useState('form');
   const [formData, setFormData] = useState({
     product: '',
     volume: '',
     pincode: '',
   });
+
+  // Referral states
+  const [hasReferral, setHasReferral] = useState(false);
+  const [referralCode, setReferralCode] = useState('');
+  const [referralPartnerName, setReferralPartnerName] = useState('');
+  const [referralDiscountInfo, setReferralDiscountInfo] = useState(null);
+  const [partnerOptions, setPartnerOptions] = useState([]);
+  const [validatingCode, setValidatingCode] = useState(false);
+
   const [leadData, setLeadData] = useState({
     name: '',
     email: '',
@@ -22,6 +33,7 @@ function QuoteCalculator() {
   });
   const [quoteId, setQuoteId] = useState('');
   const [quotePreview, setQuotePreview] = useState(null);
+  const [quoteReferral, setQuoteReferral] = useState(null);
   const [error, setError] = useState('');
   const [submitLabel, setSubmitLabel] = useState('Calculate All-Inclusive Quote');
   const [claimLabel, setClaimLabel] = useState('Unlock My Quotation');
@@ -31,6 +43,50 @@ function QuoteCalculator() {
 
   const [quoteTerms, setQuoteTerms] = useState(false);
   const [leadTerms, setLeadTerms] = useState(false);
+
+  useEffect(() => {
+    // Fetch active referral partners for dropdown
+    api.getPublicPartnerCodes()
+      .then((codes) => setPartnerOptions(codes))
+      .catch(() => {});
+
+    // Auto-detect ?ref= query parameter
+    const refParam = searchParams.get('ref');
+    if (refParam) {
+      const code = refParam.trim().toUpperCase();
+      setHasReferral(true);
+      setReferralCode(code);
+      validateCode(code);
+    }
+  }, [searchParams]);
+
+  const validateCode = async (codeToValidate) => {
+    if (!codeToValidate) return;
+    setValidatingCode(true);
+    try {
+      const info = await api.validateReferralCode(codeToValidate);
+      if (info.valid) {
+        setReferralPartnerName(info.partnerName);
+        setReferralDiscountInfo(info);
+      }
+    } catch {
+      setReferralPartnerName('');
+      setReferralDiscountInfo(null);
+    } finally {
+      setValidatingCode(false);
+    }
+  };
+
+  const handlePartnerSelect = (e) => {
+    const code = e.target.value;
+    setReferralCode(code);
+    if (code) {
+      validateCode(code);
+    } else {
+      setReferralPartnerName('');
+      setReferralDiscountInfo(null);
+    }
+  };
 
   const handleVolumeChange = (val) => {
     const num = Number(val);
@@ -70,9 +126,13 @@ function QuoteCalculator() {
     setStep('loading');
 
     try {
-      const result = await api.calculateQuote(formData);
+      const result = await api.calculateQuote({
+        ...formData,
+        referralCode: hasReferral ? referralCode : '',
+      });
       setQuoteId(`quote-${Date.now()}`);
       setQuotePreview(result.quote);
+      setQuoteReferral(result.referral);
       setStep('capture');
     } catch (requestError) {
       setError(requestError.message);
@@ -97,6 +157,7 @@ function QuoteCalculator() {
       await api.claimQuote(quoteId, {
         ...leadData,
         ...formData,
+        referralCode: hasReferral ? referralCode : '',
         website: '',
       });
       setStep('success');
@@ -181,6 +242,85 @@ function QuoteCalculator() {
               />
               <span className="form-hint">Delivery available across all Indian states via verified domestic freight partners.</span>
             </div>
+
+            {/* ── Referral Selection Section ── */}
+            <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '0.5rem', background: 'rgba(255, 255, 255, 0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <label className="form-label" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Handshake size={14} style={{ color: 'var(--neon-green, #34d399)' }} />
+                  <span>Were you referred by a BioLink partner?</span>
+                </label>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <input
+                      type="radio"
+                      name="hasReferralRadio"
+                      checked={hasReferral}
+                      onChange={() => setHasReferral(true)}
+                    />
+                    Yes
+                  </label>
+                  <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <input
+                      type="radio"
+                      name="hasReferralRadio"
+                      checked={!hasReferral}
+                      onChange={() => {
+                        setHasReferral(false);
+                        setReferralCode('');
+                        setReferralPartnerName('');
+                        setReferralDiscountInfo(null);
+                      }}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+
+              {hasReferral && (
+                <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <select
+                      className="select-field"
+                      style={{ flex: 1, minWidth: '180px' }}
+                      value={referralCode}
+                      onChange={handlePartnerSelect}
+                    >
+                      <option value="">-- Select Partner / Referrer --</option>
+                      {partnerOptions.map((p) => (
+                        <option key={p.code} value={p.code}>
+                          {p.partnerName} {p.company ? `(${p.company})` : ''} — [{p.code}]
+                        </option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="text"
+                      className="input-field"
+                      style={{ flex: 1, minWidth: '140px', textTransform: 'uppercase' }}
+                      placeholder="Or enter Code (e.g. GROWIN01)"
+                      value={referralCode}
+                      onChange={(e) => {
+                        const val = e.target.value.toUpperCase();
+                        setReferralCode(val);
+                        if (val.length >= 3) validateCode(val);
+                      }}
+                    />
+                  </div>
+
+                  {referralPartnerName ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--neon-green, #34d399)', fontSize: '0.82rem', fontWeight: 600, background: 'rgba(16, 185, 129, 0.08)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                      <Gift size={14} />
+                      <span>Referral Benefit Applied — Partner: {referralPartnerName} ({referralCode})</span>
+                    </div>
+                  ) : referralCode ? (
+                    <span style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>
+                      {validatingCode ? 'Verifying partner code...' : 'Partner code entered. Discount will be applied at calculation.'}
+                    </span>
+                  ) : null}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* T&C + Privacy Policy Checkbox */}
@@ -237,8 +377,17 @@ function QuoteCalculator() {
                 <div className="quote-calc__summary glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '16px', borderRadius: '8px', background: 'rgba(5, 150, 105, 0.03)', border: '1px solid var(--border-subtle)', textAlign: 'left', marginBottom: '16px' }}>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Price of Manure (Base): <strong style={{ color: 'var(--text-primary)' }}>Rs. {quotePreview.manureCost.toLocaleString('en-IN')}</strong></p>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Delivery Charges (Freight): <strong style={{ color: 'var(--text-primary)' }}>Rs. {quotePreview.freightCost.toLocaleString('en-IN')}</strong></p>
+                  
+                  {quoteReferral && quoteReferral.discountAmount > 0 ? (
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--neon-green, #34d399)', background: 'rgba(16, 185, 129, 0.08)', padding: '4px 8px', borderRadius: '6px' }}>
+                      🎁 Referral Discount ({quoteReferral.partnerName}): <strong>− Rs. {quoteReferral.discountAmount.toLocaleString('en-IN')}</strong>
+                    </p>
+                  ) : null}
+
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', marginTop: '4px' }}>Delivered Price Per Ton: <strong style={{ color: 'var(--neon-green)' }}>Rs. {quotePreview.pricePerTon.toLocaleString('en-IN')} / MT</strong></p>
-                  <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)', fontWeight: 'bold' }}>Total Estimate: <strong>Rs. {quotePreview.total.toLocaleString('en-IN')}</strong></p>
+                  <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)', fontWeight: 'bold' }}>
+                    Total Estimate: <strong>Rs. {(quoteReferral?.finalTotal ?? quotePreview.total).toLocaleString('en-IN')}</strong>
+                  </p>
                   <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', lineHeight: '1.4', marginTop: '4px' }}>
                     *All values are estimated and subject to change based on dynamic freight rates at the time of dispatch.
                   </span>

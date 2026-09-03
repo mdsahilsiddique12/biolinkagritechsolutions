@@ -5,6 +5,9 @@ import { authenticateToken } from '../middleware/auth.js';
 import { Order } from '../models/Order.js';
 import { ProductListing } from '../models/ProductListing.js';
 import { User } from '../models/User.js';
+import { ReferralCode } from '../models/ReferralCode.js';
+import { Referral } from '../models/Referral.js';
+import { CommissionLedger } from '../models/CommissionLedger.js';
 import { config } from '../config.js';
 import {
   buildBuyerReceipt,
@@ -91,9 +94,63 @@ router.post(
     const manureCost = updatedListing.markupPricePerTon * payload.quantityTons;
     const estimatedFreightCost = payload.distanceKm * BASE_FREIGHT_RATE_PER_KM;
     const transactionFee = Math.round(manureCost * 0.025); // 2.5% platform fee
-    const totalPaid = manureCost + estimatedFreightCost + transactionFee;
+    let grossTotal = manureCost + estimatedFreightCost + transactionFee;
 
-    // 6. CREATE ORDER WITH ESCROW STATUS
+    // ── Referral Processing & Frozen Snapshots ──
+    let referralDiscount = 0;
+    let referralRecord = null;
+    let referralCodeDoc = null;
+    let commissionRuleSnapshot = '';
+    let commissionAmount = 0;
+
+    if (payload.referralCode) {
+      const code = payload.referralCode.trim().toUpperCase();
+      referralCodeDoc = await ReferralCode.findOne({ code, active: true }).populate('partnerId');
+
+      if (referralCodeDoc && referralCodeDoc.partnerId && referralCodeDoc.partnerId.status === 'active') {
+        const tons = payload.quantityTons;
+
+        // Calculate Farmer Discount
+        if (referralCodeDoc.discountType === 'fixed_per_mt') {
+          referralDiscount = Math.round(referralCodeDoc.discountValue * tons);
+        } else if (referralCodeDoc.discountType === 'percentage_of_net') {
+          referralDiscount = Math.round(grossTotal * (referralCodeDoc.discountValue / 100));
+        } else if (referralCodeDoc.discountType === 'flat') {
+          referralDiscount = Math.round(referralCodeDoc.discountValue);
+        }
+
+        // Calculate Partner Commission (separate from farmer discount)
+        if (referralCodeDoc.commissionType === 'fixed_per_mt') {
+          commissionAmount = Math.round(referralCodeDoc.commissionValue * tons);
+          commissionRuleSnapshot = `₹${referralCodeDoc.commissionValue}/MT`;
+        } else if (referralCodeDoc.commissionType === 'percentage_of_net') {
+          const netVal = grossTotal - referralDiscount;
+          commissionAmount = Math.round(netVal * (referralCodeDoc.commissionValue / 100));
+          commissionRuleSnapshot = `${referralCodeDoc.commissionValue}% of Net`;
+        } else if (referralCodeDoc.commissionType === 'percentage_of_margin') {
+          const netVal = grossTotal - referralDiscount;
+          commissionAmount = Math.round(netVal * (referralCodeDoc.commissionValue / 100));
+          commissionRuleSnapshot = `${referralCodeDoc.commissionValue}% of Margin`;
+        }
+
+        // Record or update Farmer-Partner Attribution
+        referralRecord = await Referral.findOneAndUpdate(
+          { farmerMobile: buyer.phone || buyer.email, partnerId: referralCodeDoc.partnerId._id },
+          {
+            farmerName: buyer.name,
+            farmerEmail: buyer.email,
+            referralCodeId: referralCodeDoc._id,
+            attributionSource: 'code',
+            status: 'active',
+          },
+          { upsert: true, new: true }
+        );
+      }
+    }
+
+    const totalPaid = Math.max(0, grossTotal - referralDiscount);
+
+    // 6. CREATE ORDER WITH ESCROW STATUS & FROZEN REFERRAL SNAPSHOT
     const order = new Order({
       buyerId: buyer._id,
       listingId: updatedListing._id,
@@ -116,13 +173,34 @@ router.post(
           active: false,
         },
       ],
+      // Frozen referral snapshots
+      referralId: referralRecord?._id,
+      referralCode: referralCodeDoc?.code,
+      referralPartnerId: referralCodeDoc?.partnerId?._id,
+      referralDiscount,
+      commissionRuleSnapshot,
     });
 
     // 7. GENERATE CRYPTOGRAPHIC QA CLEARANCE TOKEN
-    //    Raw token is emailed to buyer; only the SHA-256 hash is stored.
     const rawQAToken = order.generateQAToken();
-
     await order.save();
+
+    // Create Commission Ledger Entry (Pending status)
+    if (referralCodeDoc && referralCodeDoc.partnerId && commissionAmount > 0) {
+      await CommissionLedger.create({
+        partnerId: referralCodeDoc.partnerId._id,
+        orderId: order._id,
+        orderNumber: order.trackingId,
+        quantityMT: payload.quantityTons,
+        grossAmount: grossTotal,
+        discountAmount: referralDiscount,
+        netAmount: totalPaid,
+        commissionRule: commissionRuleSnapshot,
+        basisAmount: grossTotal - referralDiscount,
+        commissionAmount,
+        status: 'pending',
+      });
+    }
 
     // 8. SEND EMAIL NOTIFICATIONS
     await Promise.allSettled([
@@ -295,6 +373,12 @@ router.post(
     });
 
     await order.save();
+
+    // ── Update Commission Ledger Status: pending → eligible ──
+    await CommissionLedger.findOneAndUpdate(
+      { orderId: order._id, status: 'pending' },
+      { status: 'eligible', eligibleAt: new Date() }
+    );
 
     // Notify both parties
     const buyer = order.buyerId;

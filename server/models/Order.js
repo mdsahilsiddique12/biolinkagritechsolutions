@@ -65,6 +65,13 @@ const OrderSchema = new mongoose.Schema(
     deliveryAddress: { type: String, trim: true, maxlength: 280 },
     distanceKm: { type: Number, required: true, min: 0 },
     trackingEvents: { type: [TrackingEventSchema], default: [] },
+
+    // ── Referral Attribution Snapshot (frozen at order creation) ──
+    referralId: { type: mongoose.Schema.Types.ObjectId, ref: 'Referral' },
+    referralCode: { type: String, trim: true, maxlength: 30 },
+    referralPartnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Partner' },
+    referralDiscount: { type: Number, default: 0, min: 0 },
+    commissionRuleSnapshot: { type: String, trim: true, maxlength: 120 },
   },
   { timestamps: true }
 );
