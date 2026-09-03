@@ -160,7 +160,7 @@ function QuoteCalculator() {
     try {
       const result = await api.calculateQuote({
         ...formData,
-        referralCode: hasReferral ? referralCode : '',
+        referralCode: referralCode || '',
       });
       setQuoteId(`quote-${Date.now()}`);
       setQuotePreview(result.quote);
@@ -189,7 +189,7 @@ function QuoteCalculator() {
       await api.claimQuote(quoteId, {
         ...leadData,
         ...formData,
-        referralCode: hasReferral ? referralCode : '',
+        referralCode: referralCode || '',
         website: '',
       });
       setStep('success');
@@ -275,83 +275,52 @@ function QuoteCalculator() {
               <span className="form-hint">Delivery available across all Indian states via verified domestic freight partners.</span>
             </div>
 
-            {/* ── Referral Selection Section ── */}
+            {/* ── Referral Selection Section (Directly Visible) ── */}
             <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '0.5rem', background: 'rgba(255, 255, 255, 0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <label className="form-label" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <Handshake size={14} style={{ color: 'var(--neon-green, #34d399)' }} />
-                  <span>Were you referred by a BioLink partner?</span>
-                </label>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <input
-                      type="radio"
-                      name="hasReferralRadio"
-                      checked={hasReferral}
-                      onChange={() => setHasReferral(true)}
-                    />
-                    Yes
-                  </label>
-                  <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <input
-                      type="radio"
-                      name="hasReferralRadio"
-                      checked={!hasReferral}
-                      onChange={() => {
-                        setHasReferral(false);
-                        setReferralCode('');
-                        setReferralPartnerName('');
-                        setReferralDiscountInfo(null);
-                      }}
-                    />
-                    No
-                  </label>
-                </div>
+              <label className="form-label" style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Handshake size={14} style={{ color: 'var(--neon-green, #34d399)' }} />
+                <span>Referred by a BioLink Partner? (Optional)</span>
+              </label>
+
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <select
+                  className="select-field"
+                  style={{ flex: 1, minWidth: '200px' }}
+                  value={referralCode}
+                  onChange={handlePartnerSelect}
+                >
+                  <option value="">-- Select Partner (e.g. Growin Agri) --</option>
+                  {partnerOptions.map((p) => (
+                    <option key={p.code} value={p.code}>
+                      {p.partnerName} {p.company ? `(${p.company})` : ''} — [{p.code}]
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  className="input-field"
+                  style={{ flex: 1, minWidth: '150px', textTransform: 'uppercase' }}
+                  placeholder="Or enter Code (GROWIN01)"
+                  value={referralCode}
+                  onChange={(e) => {
+                    const val = e.target.value.toUpperCase();
+                    setReferralCode(val);
+                    if (val.length >= 2) validateCode(val);
+                  }}
+                />
               </div>
 
-              {hasReferral && (
-                <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <select
-                      className="select-field"
-                      style={{ flex: 1, minWidth: '180px' }}
-                      value={referralCode}
-                      onChange={handlePartnerSelect}
-                    >
-                      <option value="">-- Select Partner / Referrer --</option>
-                      {partnerOptions.map((p) => (
-                        <option key={p.code} value={p.code}>
-                          {p.partnerName} {p.company ? `(${p.company})` : ''} — [{p.code}]
-                        </option>
-                      ))}
-                    </select>
-
-                    <input
-                      type="text"
-                      className="input-field"
-                      style={{ flex: 1, minWidth: '140px', textTransform: 'uppercase' }}
-                      placeholder="Or enter Code (e.g. GROWIN01)"
-                      value={referralCode}
-                      onChange={(e) => {
-                        const val = e.target.value.toUpperCase();
-                        setReferralCode(val);
-                        if (val.length >= 3) validateCode(val);
-                      }}
-                    />
-                  </div>
-
-                  {referralPartnerName ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--neon-green, #34d399)', fontSize: '0.82rem', fontWeight: 600, background: 'rgba(16, 185, 129, 0.08)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                      <Gift size={14} />
-                      <span>Referral Benefit Applied — Partner: {referralPartnerName} ({referralCode})</span>
-                    </div>
-                  ) : referralCode ? (
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>
-                      {validatingCode ? 'Verifying partner code...' : 'Partner code entered. Discount will be applied at calculation.'}
-                    </span>
-                  ) : null}
+              {referralPartnerName ? (
+                <div style={{ marginTop: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--neon-green, #34d399)', fontSize: '0.82rem', fontWeight: 600, background: 'rgba(16, 185, 129, 0.08)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                  <Gift size={14} />
+                  <span>Referral Benefit Applied — Partner: {referralPartnerName} ({referralCode || 'GROWIN01'})</span>
                 </div>
-              )}
+              ) : referralCode ? (
+                <span style={{ marginTop: '0.4rem', display: 'block', fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>
+                  {validatingCode ? 'Verifying partner code...' : 'Partner code entered. Discount will be applied at calculation.'}
+                </span>
+              ) : null}
             </div>
           </div>
 
