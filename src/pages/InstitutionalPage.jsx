@@ -289,10 +289,10 @@ function QuoteCalculator() {
                   value={referralCode}
                   onChange={handlePartnerSelect}
                 >
-                  <option value="">-- Select Partner (e.g. Growin Agri) --</option>
+                  <option value="">-- Select Partner Code (e.g. GROWIN01) --</option>
                   {partnerOptions.map((p) => (
                     <option key={p.code} value={p.code}>
-                      {p.partnerName} {p.company ? `(${p.company})` : ''} — [{p.code}]
+                      {p.code} — {p.partnerName} {p.company ? `(${p.company})` : ''}
                     </option>
                   ))}
                 </select>

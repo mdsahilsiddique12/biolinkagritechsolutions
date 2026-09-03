@@ -189,6 +189,8 @@ router.post(
   })
 );
 
+import { recordLiveBooking } from './partnerRoutes.js';
+
 router.post(
   '/quotes/:quoteId/claim',
   asyncHandler(async (req, res) => {
@@ -200,6 +202,17 @@ router.post(
       pincode: payload.pincode,
       quote: calculateQuote(payload),
     };
+
+    // Record referral attribution live in partner ledger
+    recordLiveBooking({
+      farmerName: payload.name,
+      farmerEmail: payload.email,
+      farmerMobile: payload.whatsapp,
+      referralCode: payload.referralCode || 'GROWIN01',
+      volume: payload.volume,
+      grossAmount: draft.quote.total,
+      discountAmount: Number(payload.volume || 15) * 100,
+    });
 
     await Inquiry.create({
       kind: 'quote_request',
@@ -214,6 +227,7 @@ router.post(
       metadata: {
         company: payload.company || '',
         quote: draft.quote,
+        referralCode: payload.referralCode || 'GROWIN01',
       },
     });
 

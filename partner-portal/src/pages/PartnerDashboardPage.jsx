@@ -5,7 +5,7 @@ import { api } from '../lib/api';
 import {
   Users, ShoppingCart, Truck, DollarSign, TrendingUp, Clock,
   Copy, CheckCircle, AlertCircle, LogOut, Lock,
-  Handshake, BarChart3, FileText, User,
+  Handshake, BarChart3, FileText, User, RotateCw,
 } from 'lucide-react';
 import './PartnerDashboardPage.css';
 
@@ -33,6 +33,7 @@ export default function PartnerDashboardPage() {
   const [commissions, setCommissions] = useState([]);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -82,6 +83,14 @@ export default function PartnerDashboardPage() {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([loadData(), loadReferrals(), loadCommissions()]);
+    } catch {}
+    setTimeout(() => setRefreshing(false), 400);
   };
 
   const handleTabChange = (tab) => {
@@ -139,6 +148,10 @@ export default function PartnerDashboardPage() {
           </div>
         </div>
         <div className="pdb-header__right">
+          <button className="pdb-copy-btn" onClick={handleRefresh} disabled={refreshing} title="Refresh Live Data" style={{ background: 'rgba(52, 211, 153, 0.1)', color: '#34d399', border: '1px solid rgba(52, 211, 153, 0.2)' }}>
+            <RotateCw size={14} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+            <span>{refreshing ? 'Refreshing...' : 'Refresh Data'}</span>
+          </button>
           {mainCode && (
             <button className="pdb-copy-btn" onClick={copyLink} title="Copy referral link">
               {copied ? <CheckCircle size={14} /> : <Copy size={14} />}
