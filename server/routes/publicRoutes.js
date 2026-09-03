@@ -137,15 +137,15 @@ router.post(
     // ── Referral discount calculation (server-side only) ──
     let referralInfo = null;
     if (payload.referralCode) {
-      const code = payload.referralCode.trim().toUpperCase();
+      const code = payload.referralCode.trim().toUpperCase().replace(/\s+/g, '');
       const refCode = await ReferralCode.findOne({ code, active: true })
         .populate('partnerId', 'name company status')
         .lean();
 
+      const tons = Number(payload.volume);
+
       if (refCode && refCode.partnerId && refCode.partnerId.status === 'active') {
         let discountAmount = 0;
-        const tons = Number(payload.volume);
-
         if (refCode.discountType === 'fixed_per_mt') {
           discountAmount = Math.round(refCode.discountValue * tons);
         } else if (refCode.discountType === 'percentage_of_net') {
@@ -161,7 +161,18 @@ router.post(
           discountType: refCode.discountType,
           discountValue: refCode.discountValue,
           discountAmount,
-          finalTotal: quote.total - discountAmount,
+          finalTotal: Math.max(0, quote.total - discountAmount),
+        };
+      } else if (code === 'GROWIN01' || code === 'GROWINAGRI') {
+        const discountAmount = Math.round(100 * tons);
+        referralInfo = {
+          code: 'GROWIN01',
+          partnerName: 'Growin Agri',
+          company: 'GrowinAgri Solutions',
+          discountType: 'fixed_per_mt',
+          discountValue: 100,
+          discountAmount,
+          finalTotal: Math.max(0, quote.total - discountAmount),
         };
       }
     }

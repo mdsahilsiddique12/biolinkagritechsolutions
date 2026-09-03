@@ -15,7 +15,8 @@ async function request(path, options = {}) {
 
   if (!response.ok) {
     throw new Error(
-      data.message ||
+      data.error ||
+        data.message ||
         (Array.isArray(data.issues) && data.issues[0]?.message) ||
         'Request failed.'
     );
@@ -42,7 +43,8 @@ async function partnerRequest(path, options = {}) {
 
   if (!response.ok) {
     throw new Error(
-      data.message ||
+      data.error ||
+        data.message ||
         (Array.isArray(data.issues) && data.issues[0]?.message) ||
         'Request failed.'
     );

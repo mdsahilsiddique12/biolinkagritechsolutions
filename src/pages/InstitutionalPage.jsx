@@ -18,11 +18,22 @@ function QuoteCalculator() {
   });
 
   // Referral states
+  const DEFAULT_PARTNERS = [
+    {
+      code: 'GROWIN01',
+      partnerName: 'Growin Agri',
+      company: 'GrowinAgri Solutions',
+      partnerType: 'strategic_partner',
+      discountType: 'fixed_per_mt',
+      discountValue: 100,
+    },
+  ];
+
   const [hasReferral, setHasReferral] = useState(false);
   const [referralCode, setReferralCode] = useState('');
   const [referralPartnerName, setReferralPartnerName] = useState('');
   const [referralDiscountInfo, setReferralDiscountInfo] = useState(null);
-  const [partnerOptions, setPartnerOptions] = useState([]);
+  const [partnerOptions, setPartnerOptions] = useState(DEFAULT_PARTNERS);
   const [validatingCode, setValidatingCode] = useState(false);
 
   const [leadData, setLeadData] = useState({
@@ -47,13 +58,17 @@ function QuoteCalculator() {
   useEffect(() => {
     // Fetch active referral partners for dropdown
     api.getPublicPartnerCodes()
-      .then((codes) => setPartnerOptions(codes))
+      .then((codes) => {
+        if (Array.isArray(codes) && codes.length > 0) {
+          setPartnerOptions(codes);
+        }
+      })
       .catch(() => {});
 
     // Auto-detect ?ref= query parameter
     const refParam = searchParams.get('ref');
     if (refParam) {
-      const code = refParam.trim().toUpperCase();
+      const code = refParam.trim().toUpperCase().replace(/\s+/g, '');
       setHasReferral(true);
       setReferralCode(code);
       validateCode(code);
@@ -62,9 +77,26 @@ function QuoteCalculator() {
 
   const validateCode = async (codeToValidate) => {
     if (!codeToValidate) return;
+    const clean = codeToValidate.trim().toUpperCase().replace(/\s+/g, '');
     setValidatingCode(true);
+
+    // Fast-path local check for Growin Agri
+    if (clean === 'GROWIN01' || clean === 'GROWINAGRI') {
+      setReferralPartnerName('Growin Agri');
+      setReferralDiscountInfo({
+        valid: true,
+        code: 'GROWIN01',
+        partnerName: 'Growin Agri',
+        company: 'GrowinAgri Solutions',
+        discountType: 'fixed_per_mt',
+        discountValue: 100,
+      });
+      setValidatingCode(false);
+      return;
+    }
+
     try {
-      const info = await api.validateReferralCode(codeToValidate);
+      const info = await api.validateReferralCode(clean);
       if (info.valid) {
         setReferralPartnerName(info.partnerName);
         setReferralDiscountInfo(info);

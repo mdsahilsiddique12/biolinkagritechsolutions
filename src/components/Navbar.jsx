@@ -25,7 +25,6 @@ export default function Navbar() {
     { to: '/institutional', label: 'Institutional' },
     { to: '/shop', label: 'Coming Soon' },
     { to: '/help', label: 'Help' },
-    { to: '/partner/dashboard', label: 'Partner Portal' },
     { to: '/logistics', label: 'Track' },
     { to: '/about', label: 'About' },
     { to: '/contact', label: 'Contact' },
