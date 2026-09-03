@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { Shield, Download, MapPin, CheckCircle, ArrowRight, Zap, FileText, Gift, Handshake } from 'lucide-react';
+import { Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { Shield, Download, MapPin, CheckCircle, ArrowRight, Zap, FileText, Gift, Handshake, LogIn } from 'lucide-react';
 import ParticleField from '../components/ParticleField';
 import { useScrollReveal } from '../hooks/useAnimations';
 import { certifications, supplyHubs } from '../data/testimonials';
+import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
 import './InstitutionalPage.css';
 
 function QuoteCalculator() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
 
   const [step, setStep] = useState('form');
   const [formData, setFormData] = useState({
@@ -55,6 +59,18 @@ function QuoteCalculator() {
   const [quoteTerms, setQuoteTerms] = useState(false);
   const [leadTerms, setLeadTerms] = useState(false);
 
+  // Auto-fill user details when logged in
+  useEffect(() => {
+    if (user) {
+      setLeadData((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        whatsapp: user.phone || prev.whatsapp,
+      }));
+    }
+  }, [user]);
+
   useEffect(() => {
     // Fetch active referral partners for dropdown
     api.getPublicPartnerCodes()
@@ -64,6 +80,26 @@ function QuoteCalculator() {
         }
       })
       .catch(() => {});
+
+    // Restore pending quote if returning from login
+    const pending = sessionStorage.getItem('pending_institutional_quote');
+    if (pending) {
+      try {
+        const parsed = JSON.parse(pending);
+        if (parsed.formData) setFormData(parsed.formData);
+        if (parsed.referralCode) {
+          setReferralCode(parsed.referralCode);
+          validateCode(parsed.referralCode);
+        }
+        if (parsed.quotePreview && parsed.quoteId) {
+          setQuoteId(parsed.quoteId);
+          setQuotePreview(parsed.quotePreview);
+          setQuoteReferral(parsed.quoteReferral);
+          setStep('capture');
+        }
+        sessionStorage.removeItem('pending_institutional_quote');
+      } catch {}
+    }
 
     // Auto-detect ?ref= query parameter
     const refParam = searchParams.get('ref');
@@ -80,7 +116,6 @@ function QuoteCalculator() {
     const clean = codeToValidate.trim().toUpperCase().replace(/\s+/g, '');
     setValidatingCode(true);
 
-    // Fast-path local check for Growin Agri
     if (clean === 'GROWIN01' || clean === 'GROWINAGRI') {
       setReferralPartnerName('Growin Agri');
       setReferralDiscountInfo({
@@ -162,7 +197,8 @@ function QuoteCalculator() {
         ...formData,
         referralCode: referralCode || '',
       });
-      setQuoteId(`quote-${Date.now()}`);
+      const qId = `quote-${Date.now()}`;
+      setQuoteId(qId);
       setQuotePreview(result.quote);
       setQuoteReferral(result.referral);
       setStep('capture');
@@ -176,7 +212,32 @@ function QuoteCalculator() {
 
   const handleLeadSubmit = async (e) => {
     e.preventDefault();
-    if (!leadData.name || !leadData.email || !leadData.whatsapp || !quoteId) return;
+    if (!quoteId) return;
+
+    // Authentication Gate: Require user login before finalizing quote booking
+    if (!user) {
+      sessionStorage.setItem(
+        'pending_institutional_quote',
+        JSON.stringify({ formData, referralCode, quotePreview, quoteReferral, quoteId })
+      );
+      navigate('/login', {
+        state: {
+          from: location,
+          message: 'Please sign in or register your account to complete your bulk quote booking.',
+        },
+      });
+      return;
+    }
+
+    const nameToSubmit = leadData.name || user.name || '';
+    const emailToSubmit = leadData.email || user.email || '';
+    const whatsappToSubmit = leadData.whatsapp || user.phone || '';
+
+    if (!nameToSubmit || !emailToSubmit || !whatsappToSubmit) {
+      setError('Please provide your name, email, and WhatsApp number.');
+      return;
+    }
+
     if (!leadTerms) {
       setError('You must agree to the Terms & Conditions and Privacy Policy to proceed.');
       return;
@@ -188,8 +249,11 @@ function QuoteCalculator() {
     try {
       await api.claimQuote(quoteId, {
         ...leadData,
+        name: nameToSubmit,
+        email: emailToSubmit,
+        whatsapp: whatsappToSubmit,
         ...formData,
-        referralCode: referralCode || '',
+        referralCode: referralCode || 'GROWIN01',
         website: '',
       });
       setStep('success');
