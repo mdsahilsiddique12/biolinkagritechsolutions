@@ -20,7 +20,7 @@ const router = express.Router();
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
-// ── Live In-Memory Referral Store (Starts completely empty with zero fake model data) ──
+// ── Live In-Memory Referral Store (Starts completely empty) ──
 export const liveBookingsStore = [];
 
 export function recordLiveBooking(data) {
@@ -74,7 +74,7 @@ async function getPartnerIdsForQuery(reqPartnerId) {
       }
     });
   } catch {}
-  return ids.length > 0 ? ids : (reqPartnerId ? [reqPartnerId] : []);
+  return ids;
 }
 
 // POST /login
@@ -420,7 +420,7 @@ router.get(
   })
 );
 
-// GET /me/dashboard — Aggregated stats (Queries Referral + CommissionLedger + Inquiry + Order)
+// GET /me/dashboard — Aggregated stats
 router.get(
   '/me/dashboard',
   authenticatePartnerToken,
@@ -436,26 +436,19 @@ router.get(
     if (isDbConnected) {
       try {
         const targetIds = await getPartnerIdsForQuery(req.partner.id);
-        dbOrders = await Order.find({
-          $or: [
-            { referralPartnerId: { $in: targetIds } },
-            { referralCode: { $regex: /(KJ01|KRISHAKJAN|GROWIN)/i } },
-          ],
-        }).lean().catch(() => []);
+        const refFilter = targetIds.length > 0 ? { partnerId: { $in: targetIds } } : {};
 
-        dbReferrals = await Referral.find({
-          $or: [
-            { partnerId: { $in: targetIds } },
-            {},
-          ],
-        }).lean().catch(() => []);
+        dbOrders = await Order.find({}).lean().catch(() => []);
+        dbReferrals = await Referral.find(refFilter).lean().catch(() => []);
 
-        dbCommissions = await CommissionLedger.find({
-          $or: [
-            { partnerId: { $in: targetIds } },
-            {},
-          ],
-        }).lean().catch(() => []);
+        if (dbReferrals.length === 0) {
+          dbReferrals = await Referral.find({}).lean().catch(() => []);
+        }
+
+        dbCommissions = await CommissionLedger.find(refFilter).lean().catch(() => []);
+        if (dbCommissions.length === 0) {
+          dbCommissions = await CommissionLedger.find({}).lean().catch(() => []);
+        }
 
         dbInquiries = await Inquiry.find({}).lean().catch(() => []);
       } catch (err) {
@@ -466,50 +459,58 @@ router.get(
     const farmerMap = new Map();
 
     dbReferrals.forEach((r) => {
-      const key = (r.farmerMobile || r.farmerEmail || r.farmerName || '').toLowerCase();
+      const key = (r.farmerMobile || r.farmerEmail || r.farmerName || r._id.toString()).toLowerCase();
       if (key && !farmerMap.has(key)) {
         farmerMap.set(key, { name: r.farmerName, email: r.farmerEmail, mobile: r.farmerMobile });
       }
     });
 
     dbInquiries.forEach((i) => {
-      const key = (i.whatsapp || i.phone || i.email || i.name || '').toLowerCase();
+      const key = (i.whatsapp || i.phone || i.email || i.name || i._id.toString()).toLowerCase();
       if (key && !farmerMap.has(key)) {
         farmerMap.set(key, { name: i.name, email: i.email, mobile: i.whatsapp || i.phone });
       }
     });
 
     liveBookingsStore.forEach((b) => {
-      const key = (b.farmerMobile || b.farmerEmail || b.farmerName || '').toLowerCase();
+      const key = (b.farmerMobile || b.farmerEmail || b.farmerName || b.id).toLowerCase();
       if (key && !farmerMap.has(key)) {
         farmerMap.set(key, { name: b.farmerName, email: b.farmerEmail, mobile: b.farmerMobile });
       }
     });
 
-    let totalMT = dbCommissions.reduce((sum, c) => sum + (c.quantityMT || 0), 0);
-    if (totalMT === 0 && dbInquiries.length > 0) {
-      totalMT = dbInquiries.reduce((sum, i) => sum + (Number(i.volume) || 15), 0);
-    }
-    if (totalMT === 0 && liveBookingsStore.length > 0) {
-      totalMT = liveBookingsStore.reduce((sum, b) => sum + (b.quantityMT || 0), 0);
-    }
-
-    let grossSales = dbCommissions.reduce((sum, c) => sum + (c.netAmount || c.grossAmount || 0), 0);
-    if (grossSales === 0 && dbInquiries.length > 0) {
-      grossSales = dbInquiries.reduce((sum, i) => sum + (i.quoteAmount || (Number(i.volume || 15) * 7000 + 14000)), 0);
-    }
-    if (grossSales === 0 && liveBookingsStore.length > 0) {
-      grossSales = liveBookingsStore.reduce((sum, b) => sum + (b.netAmount || 0), 0);
+    let totalMT = 0;
+    if (dbCommissions.length > 0) {
+      totalMT = dbCommissions.reduce((sum, c) => sum + Number(c.quantityMT || 15), 0);
+    } else if (dbReferrals.length > 0) {
+      totalMT = dbReferrals.length * 15;
+    } else if (dbInquiries.length > 0) {
+      totalMT = dbInquiries.reduce((sum, i) => sum + Number(i.volume || 15), 0);
+    } else if (liveBookingsStore.length > 0) {
+      totalMT = liveBookingsStore.reduce((sum, b) => sum + Number(b.quantityMT || 15), 0);
     }
 
-    const totalFarmers = Math.max(farmerMap.size, dbReferrals.length, dbInquiries.length, liveBookingsStore.length);
+    let grossSales = 0;
+    if (dbCommissions.length > 0) {
+      grossSales = dbCommissions.reduce((sum, c) => sum + Number(c.netAmount || c.grossAmount || 119000), 0);
+    } else if (dbReferrals.length > 0) {
+      grossSales = dbReferrals.length * 119000;
+    } else if (dbInquiries.length > 0) {
+      grossSales = dbInquiries.reduce((sum, i) => sum + Number(i.quoteAmount || 119000), 0);
+    } else if (liveBookingsStore.length > 0) {
+      grossSales = liveBookingsStore.reduce((sum, b) => sum + Number(b.netAmount || 119000), 0);
+    }
+
+    const totalFarmers = farmerMap.size;
     const activeFarmers = totalFarmers;
     const totalOrders = Math.max(totalFarmers, dbOrders.length, dbInquiries.length, liveBookingsStore.length);
 
     const totalDiscounts = totalMT * 100;
 
-    let totalCommission = dbCommissions.reduce((sum, c) => sum + (c.commissionAmount || 0), 0);
-    if (totalCommission === 0) {
+    let totalCommission = 0;
+    if (dbCommissions.length > 0) {
+      totalCommission = dbCommissions.reduce((sum, c) => sum + Number(c.commissionAmount || (Number(c.quantityMT || 15) * 300)), 0);
+    } else {
       totalCommission = totalMT * 300;
     }
 
@@ -528,7 +529,7 @@ router.get(
   })
 );
 
-// GET /me/referrals
+// GET /me/referrals — Referred Farmers List (Fetches all Referral documents from MongoDB)
 router.get(
   '/me/referrals',
   authenticatePartnerToken,
@@ -540,33 +541,40 @@ router.get(
     if (isDbConnected) {
       try {
         const targetIds = await getPartnerIdsForQuery(req.partner.id);
-        const referrals = await Referral.find({
-          $or: [
-            { partnerId: { $in: targetIds } },
-            {},
-          ],
-        })
+        const refFilter = targetIds.length > 0 ? { partnerId: { $in: targetIds } } : {};
+
+        let referrals = await Referral.find(refFilter)
           .populate('referralCodeId', 'code')
           .sort({ attributedAt: -1, createdAt: -1 })
-          .lean();
+          .lean()
+          .catch(() => []);
 
-        const inquiries = await Inquiry.find({}).sort({ createdAt: -1 }).lean();
+        if (referrals.length === 0) {
+          referrals = await Referral.find({})
+            .populate('referralCodeId', 'code')
+            .sort({ attributedAt: -1, createdAt: -1 })
+            .lean()
+            .catch(() => []);
+        }
+
+        const inquiries = await Inquiry.find({}).sort({ createdAt: -1 }).lean().catch(() => []);
 
         const referralItems = referrals.map((ref) => {
-          const vol = 15;
-          const rev = vol * 7000 + 14000 - vol * 100;
+          const vol = Number(ref.volume || 15);
+          const rev = Number(ref.grossAmount || (vol * 7000 + 14000 - vol * 100));
+          const comm = Number(ref.commissionAmount || (vol * 300));
           return {
             id: ref._id.toString(),
             farmerName: ref.farmerName || 'Farmer Client',
-            farmerMobile: ref.farmerMobile ? `${ref.farmerMobile.slice(0, 3)}****${ref.farmerMobile.slice(-3)}` : '987****321',
-            referralCode: ref.referralCodeId?.code || 'KJ01',
+            farmerMobile: ref.farmerMobile ? `${ref.farmerMobile.slice(0, 4)}****${ref.farmerMobile.slice(-3)}` : '987****321',
+            referralCode: ref.referralCodeId?.code || ref.referralCode || 'KJ01',
             attributedAt: ref.attributedAt || ref.createdAt,
             attributionSource: ref.attributionSource || 'code',
             status: ref.status || 'active',
             totalOrders: 1,
             totalMT: vol,
             totalRevenue: rev,
-            totalCommission: vol * 300,
+            totalCommission: comm,
           };
         });
 
@@ -576,7 +584,7 @@ router.get(
           return {
             id: inq._id.toString(),
             farmerName: inq.name || 'Farmer Prospect',
-            farmerMobile: (inq.whatsapp || inq.phone) ? `${(inq.whatsapp || inq.phone).slice(0, 3)}****${(inq.whatsapp || inq.phone).slice(-3)}` : '987****321',
+            farmerMobile: (inq.whatsapp || inq.phone) ? `${(inq.whatsapp || inq.phone).slice(0, 4)}****${(inq.whatsapp || inq.phone).slice(-3)}` : '987****321',
             referralCode: inq.metadata?.referralCode || 'KJ01',
             attributedAt: inq.createdAt,
             attributionSource: 'code',
@@ -604,7 +612,7 @@ router.get(
     const liveList = liveBookingsStore.map((b) => ({
       id: b.id,
       farmerName: b.farmerName,
-      farmerMobile: b.farmerMobile ? `${b.farmerMobile.slice(0, 3)}****${b.farmerMobile.slice(-3)}` : '987****321',
+      farmerMobile: b.farmerMobile ? `${b.farmerMobile.slice(0, 4)}****${b.farmerMobile.slice(-3)}` : '987****321',
       referralCode: b.referralCode,
       attributedAt: b.attributedAt,
       attributionSource: 'code',
@@ -620,7 +628,7 @@ router.get(
   })
 );
 
-// GET /me/commissions
+// GET /me/commissions — Commission Ledger List
 router.get(
   '/me/commissions',
   authenticatePartnerToken,
@@ -632,30 +640,42 @@ router.get(
     if (isDbConnected) {
       try {
         const targetIds = await getPartnerIdsForQuery(req.partner.id);
-        const entries = await CommissionLedger.find({
-          $or: [
-            { partnerId: { $in: targetIds } },
-            {},
-          ],
-        })
+        const commFilter = targetIds.length > 0 ? { partnerId: { $in: targetIds } } : {};
+
+        let entries = await CommissionLedger.find(commFilter)
           .sort({ createdAt: -1 })
-          .lean();
+          .lean()
+          .catch(() => []);
 
-        const inquiries = await Inquiry.find({}).sort({ createdAt: -1 }).lean();
+        if (entries.length === 0) {
+          entries = await CommissionLedger.find({})
+            .sort({ createdAt: -1 })
+            .lean()
+            .catch(() => []);
+        }
 
-        const ledgerItems = entries.map((e) => ({
-          id: e._id.toString(),
-          orderNumber: e.orderNumber || `ORD-${Date.now().toString().slice(-6)}`,
-          quantityMT: e.quantityMT || 15,
-          grossAmount: e.grossAmount || 120500,
-          discountAmount: e.discountAmount || 1500,
-          netAmount: e.netAmount || 119000,
-          commissionRule: e.commissionRule || '₹300/MT',
-          commissionAmount: e.commissionAmount || 4500,
-          status: e.status || 'eligible',
-          eligibleAt: e.eligibleAt || e.createdAt,
-          createdAt: e.createdAt,
-        }));
+        const inquiries = await Inquiry.find({}).sort({ createdAt: -1 }).lean().catch(() => []);
+
+        const ledgerItems = entries.map((e) => {
+          const mt = Number(e.quantityMT || 15);
+          const gross = Number(e.grossAmount || (mt * 7000 + 14000));
+          const discount = Number(e.discountAmount || (mt * 100));
+          const net = Number(e.netAmount || Math.max(0, gross - discount));
+          const comm = Number(e.commissionAmount || (mt * 300));
+          return {
+            id: e._id.toString(),
+            orderNumber: e.orderNumber || `ORD-${e._id.toString().slice(-6)}`,
+            quantityMT: mt,
+            grossAmount: gross,
+            discountAmount: discount,
+            netAmount: net,
+            commissionRule: e.commissionRule || '₹300/MT',
+            commissionAmount: comm,
+            status: e.status || 'eligible',
+            eligibleAt: e.eligibleAt || e.createdAt,
+            createdAt: e.createdAt,
+          };
+        });
 
         const inquiryLedgerItems = inquiries.map((inq, idx) => {
           const vol = Number(inq.volume || 15);
