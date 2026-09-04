@@ -122,6 +122,7 @@ export function createApp() {
   app.use('/api/auth', authRoutes);
   app.use('/api/orders', orderRoutes);
   app.use('/api/partners', partnerRoutes);
+  app.use('/api/partner', partnerRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

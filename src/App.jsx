@@ -9,11 +9,14 @@ import LogisticsPage from './pages/LogisticsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import LoginPage from './pages/LoginPage';
+import PartnerLoginPage from './pages/PartnerLoginPage';
+import PartnerDashboardPage from './pages/PartnerDashboardPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import LabReportsPage from './pages/LabReportsPage';
 import NurseryGuidePage from './pages/NurseryGuidePage';
 import { AuthProvider } from './context/AuthContext';
+import { PartnerAuthProvider } from './context/PartnerAuthContext';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -36,6 +39,10 @@ function AppContent() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/partner" element={<PartnerLoginPage />} />
+        <Route path="/partner/login" element={<PartnerLoginPage />} />
+        <Route path="/partner-login" element={<PartnerLoginPage />} />
+        <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/lab-reports" element={<LabReportsPage />} />
@@ -50,9 +57,12 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppContent />
+        <PartnerAuthProvider>
+          <AppContent />
+        </PartnerAuthProvider>
       </AuthProvider>
     </BrowserRouter>
   );
 }
+
 

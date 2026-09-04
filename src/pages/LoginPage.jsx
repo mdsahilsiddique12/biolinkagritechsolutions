@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Lock, Mail, User, Phone, CheckCircle, AlertCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, User, Phone, CheckCircle, AlertCircle, ArrowRight, ShieldCheck, Handshake } from 'lucide-react';
 import './LoginPage.css';
 
 export default function LoginPage() {
@@ -86,6 +86,17 @@ export default function LoginPage() {
             <p className="login-card__subtitle">
               Verify credentials to access live logistics & B2B procurement pipelines.
             </p>
+          </div>
+
+          {/* Partner Portal Gateway Banner */}
+          <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '10px', padding: '10px 14px', margin: '0 0 var(--space-lg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#e2e8f0' }}>
+              <Handshake size={16} style={{ color: '#34d399' }} />
+              <span><strong>BioLink Partner / KrishakJan?</strong> Sign in to your partner portal</span>
+            </div>
+            <Link to="/partner/login" className="btn btn-outline" style={{ fontSize: '0.78rem', padding: '4px 12px', borderColor: '#34d399', color: '#34d399' }}>
+              Partner Portal &rarr;
+            </Link>
           </div>
 
           {/* Form Tabs */}
