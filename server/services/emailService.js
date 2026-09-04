@@ -436,7 +436,7 @@ export function buildPartnerReferralNotificationEmail({
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 25px;">
                     <tr>
                       <td align="center">
-                        <a href="https://biolinkagri.in/partner" target="_blank" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 14px 30px; border-radius: 8px; display: inline-block; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);">
+                        <a href="https://partner.biolinkagri.in" target="_blank" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 14px 30px; border-radius: 8px; display: inline-block; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);">
                           Access Your Live Partner Portal &rarr;
                         </a>
                       </td>
