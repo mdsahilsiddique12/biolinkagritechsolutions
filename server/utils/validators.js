@@ -35,11 +35,11 @@ export const quoteCalculationSchema = z.object({
 export const quoteClaimSchema = z.object({
   name: z.string().trim().min(2).max(120),
   email: z.email().max(180),
-  whatsapp: z.string().trim().regex(indianPhoneRegex),
+  whatsapp: z.string().trim().min(7).max(30),
   company: z.string().trim().min(2).max(120).optional().or(z.literal('')),
   product: z.enum(['solid-fom', 'liquid-slurry']),
   volume: z.coerce.number().min(15).max(1000),
-  pincode: z.string().regex(pincodeRegex),
+  pincode: z.string().trim().min(5).max(10),
   referralCode: z.string().trim().min(2).max(30).optional().or(z.literal('')),
   website: z.string().max(0).optional(),
 });
@@ -107,6 +107,15 @@ export const statusTransitionSchema = z.object({
 export const partnerLoginSchema = z.object({
   email: z.email().max(180),
   password: z.string().min(8).max(100),
+});
+
+export const partnerRegisterSchema = z.object({
+  name: z.string().trim().min(2).max(120),
+  email: z.email().max(180),
+  password: z.string().min(8).max(100),
+  phone: z.string().trim().optional().or(z.literal('')),
+  company: z.string().trim().max(120).optional().or(z.literal('')),
+  requestedCode: z.string().trim().max(30).optional().or(z.literal('')),
 });
 
 export const partnerPasswordChangeSchema = z.object({

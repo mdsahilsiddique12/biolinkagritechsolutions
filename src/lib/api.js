@@ -124,6 +124,12 @@ export const api = {
       body: JSON.stringify(payload),
     });
   },
+  partnerRegister(payload) {
+    return request('/partners/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
 
   // ── Partner Dashboard (Partner-authenticated) ──
   getPartnerProfile() {

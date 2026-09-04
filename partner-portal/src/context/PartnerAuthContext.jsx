@@ -30,6 +30,18 @@ export function PartnerAuthProvider({ children }) {
     throw new Error(response.error || 'Partner authentication failed');
   };
 
+  const partnerRegister = async (payload) => {
+    const response = await api.partnerRegister(payload);
+    if (response.token) {
+      localStorage.setItem('partner_token', response.token);
+      localStorage.setItem('partner_user', JSON.stringify(response.partner));
+      setPartnerToken(response.token);
+      setPartner(response.partner);
+      return response;
+    }
+    throw new Error(response.error || 'Partner registration failed');
+  };
+
   const partnerLogout = () => {
     localStorage.removeItem('partner_token');
     localStorage.removeItem('partner_user');
@@ -38,7 +50,7 @@ export function PartnerAuthProvider({ children }) {
   };
 
   return (
-    <PartnerAuthContext.Provider value={{ partner, partnerToken, loading, partnerLogin, partnerLogout }}>
+    <PartnerAuthContext.Provider value={{ partner, partnerToken, loading, partnerLogin, partnerRegister, partnerLogout }}>
       {children}
     </PartnerAuthContext.Provider>
   );

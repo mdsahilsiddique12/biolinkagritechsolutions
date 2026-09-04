@@ -58,20 +58,17 @@
 }
 
 .quote-calc {
-  max-width: 600px;
+  max-width: 840px;
+  width: 100%;
   margin: 0 auto;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-2xl);
-  box-shadow: var(--shadow-neon);
-  min-height: 380px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: var(--glass-bg, rgba(13, 21, 38, 0.6));
+  backdrop-filter: blur(var(--glass-blur, 16px));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-xl, 20px);
+  padding: 2.5rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  min-height: auto;
 }
-
 
 .quote-calc__form {
   width: 100%;
@@ -83,21 +80,27 @@
 }
 
 .quote-calc__title {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: var(--text-primary);
   margin: var(--space-sm) 0;
 }
 
 .quote-calc__desc {
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .quote-calc__fields {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
   margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 640px) {
+  .quote-calc__fields {
+    grid-template-columns: 1fr;
+  }
 }
 
 .quote-calc__submit {

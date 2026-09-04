@@ -32,6 +32,12 @@ export const api = {
       body: JSON.stringify(payload),
     });
   },
+  partnerRegister(payload) {
+    return partnerRequest('/partners/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
   getPartnerProfile() {
     return partnerRequest('/partners/me');
   },

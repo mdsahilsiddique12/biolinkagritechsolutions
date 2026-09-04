@@ -36,3 +36,9 @@ a {
 button {
   font-family: inherit;
 }
+
+/* Hides the Netlify injected badge */
+div[id^="netlify-"] {
+    display: none !important;
+    visibility: hidden !important;
+}

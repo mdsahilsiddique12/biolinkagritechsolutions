@@ -13,6 +13,7 @@ import { Inquiry } from '../models/Inquiry.js';
 import { config } from '../config.js';
 import {
   partnerLoginSchema,
+  partnerRegisterSchema,
   partnerPasswordChangeSchema,
 } from '../utils/validators.js';
 
@@ -184,6 +185,96 @@ router.post(
     }
 
     throw new HttpError(401, 'Invalid email or password.');
+  })
+);
+
+// POST /register — New partner account registration & code creation
+router.post(
+  '/register',
+  asyncHandler(async (req, res) => {
+    const payload = partnerRegisterSchema.parse(req.body);
+    const email = payload.email.toLowerCase().trim();
+
+    const isDbConnected = mongoose.connection.readyState >= 1;
+    if (isDbConnected) {
+      const existing = await Partner.findOne({ email });
+      if (existing) {
+        throw new HttpError(400, 'A partner account with this email already exists.');
+      }
+
+      const partner = await Partner.create({
+        name: payload.name,
+        email,
+        password: payload.password,
+        phone: payload.phone || '',
+        company: payload.company || `${payload.name} Solutions`,
+        partnerType: 'strategic_partner',
+        status: 'active',
+        attributionWindowDays: 365,
+      });
+
+      let codeStr = (payload.requestedCode || '').trim().toUpperCase().replace(/\s+/g, '');
+      if (!codeStr || codeStr.length < 2) {
+        const cleanName = payload.name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6) || 'PARTNER';
+        const randNum = Math.floor(10 + Math.random() * 90);
+        codeStr = `${cleanName}${randNum}`;
+      }
+
+      const existingCode = await ReferralCode.findOne({ code: codeStr });
+      if (existingCode) {
+        codeStr = `KJ${Math.floor(100 + Math.random() * 900)}`;
+      }
+
+      const referralCode = await ReferralCode.create({
+        code: codeStr,
+        partnerId: partner._id,
+        discountType: 'fixed_per_mt',
+        discountValue: 100,
+        commissionType: 'fixed_per_mt',
+        commissionValue: 300,
+        active: true,
+      });
+
+      const token = jwt.sign(
+        { id: partner._id.toString(), role: 'partner' },
+        config.jwtSecret,
+        { expiresIn: '7d' }
+      );
+
+      return res.json({
+        token,
+        partner: {
+          id: partner._id,
+          name: partner.name,
+          email: partner.email,
+          company: partner.company,
+          partnerType: partner.partnerType,
+          status: partner.status,
+          codes: [referralCode.code],
+        },
+      });
+    } else {
+      const demoId = `demo-${Date.now()}`;
+      const codeStr = (payload.requestedCode || 'KJ02').toUpperCase();
+      const token = jwt.sign(
+        { id: demoId, role: 'partner' },
+        config.jwtSecret,
+        { expiresIn: '7d' }
+      );
+
+      return res.json({
+        token,
+        partner: {
+          id: demoId,
+          name: payload.name,
+          email,
+          company: payload.company || `${payload.name} Solutions`,
+          partnerType: 'strategic_partner',
+          status: 'active',
+          codes: [codeStr],
+        },
+      });
+    }
   })
 );
 

@@ -790,3 +790,9 @@ h4 { font-size: clamp(1.05rem, 2vw, 1.35rem); }
   background: rgba(5, 150, 105, 0.25);
   color: #fff;
 }
+
+/* Hides the Netlify injected badge */
+div[id^="netlify-"] {
+    display: none !important;
+    visibility: hidden !important;
+}
