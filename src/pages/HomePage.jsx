@@ -334,83 +334,86 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══ STRATEGIC PARTNERS MARQUEE ═══ */}
-      <section className="section partners-section" id="partners-section">
-        <div className="partners-section__glow" />
-        <div className="container">
-          <div className="section-header" style={{ marginBottom: 'var(--space-xl)' }}>
-            <span className="section-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Handshake size={14} style={{ color: 'var(--neon-green)' }} /> Strategic Ecosystem
-            </span>
-            <h2 className="section-title text-glow">Our Strategic Partners</h2>
-            <p className="section-subtitle">
-              Collaborating with India's leading agri-tech platforms and sustainable farming networks.
-            </p>
-          </div>
+      {/* ═══ CIRCULAR STRATEGIC PARTNERS MARQUEE ═══ */}
+      <section className="partners-circle-section" id="partners-section">
+        <div className="partners-circle-header">
+          <span className="partners-circle-label">
+            <Handshake size={14} /> Strategic Ecosystem
+          </span>
+          <h2 className="partners-circle-title">Join the BioLink Network</h2>
+          <p className="partners-circle-subtitle">
+            Collaborating with India's premier agri-tech platforms and sustainable farming networks.
+          </p>
         </div>
 
-        <div className="partners-marquee-container">
-          <div className="partners-marquee-track">
+        <div className="partners-circle-container">
+          <div className="partners-circle-track">
             {[1, 2, 3].flatMap(() => [
               {
                 id: 'krishakjan',
-                logo: 'KJ',
                 name: 'KrishakJan',
-                sub: 'Strategic Agri & Input Partner',
-                desc: "Pioneering agri-solutions and farm advisory network connecting 10,000+ Indian farmers with certified organic inputs & high-yield bio-manure.",
-                code: 'Code: KJ01',
-                badge: '10k+ Farmers',
+                subtitle: 'Strategic Agri & Input Partner',
+                logoImg: '/krishakjan-logo.png',
                 url: 'https://krishakjan.com/',
-                highlight: true,
               },
               {
                 id: 'satat',
-                logo: 'GOI',
                 name: 'SATAT CBG Network',
-                sub: 'Govt. of India Clean Energy',
-                desc: 'Sustainable Alternative Towards Affordable Transportation (SATAT) partnership delivering lab-tested Fermented Organic Manure across India.',
-                code: 'SATAT Verified',
-                badge: 'SATAT Partner',
-                url: '',
-                highlight: false,
+                subtitle: 'Govt. of India Clean Energy',
+                emblemClass: 'circle-logo-emblem--indigo',
+                logoText: 'SATAT\nCBG',
+                url: 'https://satat.co.in/',
               },
               {
                 id: 'biolink',
-                logo: 'BL',
                 name: 'BioLink Agritech',
-                sub: 'Supply Chain & Lab Backbone',
-                desc: 'Integrated logistics engine ensuring direct factory dispatch, zero middleman markups, and end-to-end NPK lab report verification.',
-                code: 'Network Hub',
-                badge: 'Primary Hub',
-                url: '',
-                highlight: false,
+                subtitle: 'Supply Chain & Lab Backbone',
+                emblemClass: 'circle-logo-emblem--green',
+                logoText: 'BioLink\nAgri',
+                url: 'https://biolinkagri.in/',
+              },
+              {
+                id: 'gobardhan',
+                name: 'GOBARdhan Initiative',
+                subtitle: 'Organic Inputs & Clean Energy',
+                emblemClass: 'circle-logo-emblem--gold',
+                logoText: 'GOBAR\ndhan',
+                url: 'https://gobardhan.co.in/',
+              },
+              {
+                id: 'nabard',
+                name: 'NABARD Farmers Club',
+                subtitle: 'Agri Development Network',
+                emblemClass: 'circle-logo-emblem--indigo',
+                logoText: 'NABARD\nClub',
+                url: 'https://www.nabard.org/',
               },
             ]).map((item, idx) => (
-              <div key={`${item.id}-${idx}`} className="partner-marquee-card">
-                <div className="partner-card__header">
-                  <div className="partner-logo-box">
-                    {item.logo}
-                  </div>
-                  <div>
-                    <h3 className="partner-card__title">{item.name}</h3>
-                    <span className="partner-card__sub">{item.sub}</span>
-                  </div>
+              <div key={`${item.id}-${idx}`} className="circle-partner-item">
+                <div className="circle-logo-badge">
+                  {item.logoImg ? (
+                    <img src={item.logoImg} alt={item.name} className="circle-logo-img" />
+                  ) : (
+                    <div className={`circle-logo-emblem ${item.emblemClass}`}>
+                      {item.logoText.split('\n').map((line, i) => (
+                        <span key={i}>{line}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <p className="partner-card__desc">{item.desc}</p>
-                <div className="partner-card__tags">
-                  <span className="partner-tag partner-tag--green">{item.code}</span>
-                  <span className="partner-tag">{item.badge}</span>
-                </div>
-                {item.url && (
+                <h4 className="circle-partner-name">{item.name}</h4>
+                {item.url ? (
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="partner-card__link"
+                    className="circle-partner-link"
                   >
-                    <span>Visit {item.name}</span>
-                    <ExternalLink size={14} />
+                    <span>Visit Website</span>
+                    <ExternalLink size={12} />
                   </a>
+                ) : (
+                  <span className="circle-partner-sub">{item.subtitle}</span>
                 )}
               </div>
             ))}
