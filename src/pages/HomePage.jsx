@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Truck, Factory, Clock, Shield, Star, ChevronRight, Leaf, Droplets, Beaker, Package, Zap, Globe } from 'lucide-react';
+import { ArrowRight, Truck, Factory, Clock, Shield, Star, ChevronRight, Leaf, Droplets, Beaker, Package, Zap, Globe, ExternalLink, Handshake, Award } from 'lucide-react';
 import ParticleField from '../components/ParticleField';
 import { useScrollReveal, useCountUp } from '../hooks/useAnimations';
 import { testimonials, stats, certifications, supplyHubs } from '../data/testimonials';
@@ -330,6 +330,90 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ STRATEGIC PARTNERS MARQUEE ═══ */}
+      <section className="section partners-section" id="partners-section">
+        <div className="partners-section__glow" />
+        <div className="container">
+          <div className="section-header" style={{ marginBottom: 'var(--space-xl)' }}>
+            <span className="section-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Handshake size={14} style={{ color: 'var(--neon-green)' }} /> Strategic Ecosystem
+            </span>
+            <h2 className="section-title text-glow">Our Strategic Partners</h2>
+            <p className="section-subtitle">
+              Collaborating with India's leading agri-tech platforms and sustainable farming networks.
+            </p>
+          </div>
+        </div>
+
+        <div className="partners-marquee-container">
+          <div className="partners-marquee-track">
+            {[1, 2, 3].flatMap(() => [
+              {
+                id: 'krishakjan',
+                logo: 'KJ',
+                name: 'KrishakJan',
+                sub: 'Strategic Agri & Input Partner',
+                desc: "Pioneering agri-solutions and farm advisory network connecting 10,000+ Indian farmers with certified organic inputs & high-yield bio-manure.",
+                code: 'Code: KJ01',
+                badge: '10k+ Farmers',
+                url: 'https://krishakjan.com/',
+                highlight: true,
+              },
+              {
+                id: 'satat',
+                logo: 'GOI',
+                name: 'SATAT CBG Network',
+                sub: 'Govt. of India Clean Energy',
+                desc: 'Sustainable Alternative Towards Affordable Transportation (SATAT) partnership delivering lab-tested Fermented Organic Manure across India.',
+                code: 'SATAT Verified',
+                badge: 'SATAT Partner',
+                url: '',
+                highlight: false,
+              },
+              {
+                id: 'biolink',
+                logo: 'BL',
+                name: 'BioLink Agritech',
+                sub: 'Supply Chain & Lab Backbone',
+                desc: 'Integrated logistics engine ensuring direct factory dispatch, zero middleman markups, and end-to-end NPK lab report verification.',
+                code: 'Network Hub',
+                badge: 'Primary Hub',
+                url: '',
+                highlight: false,
+              },
+            ]).map((item, idx) => (
+              <div key={`${item.id}-${idx}`} className="partner-marquee-card">
+                <div className="partner-card__header">
+                  <div className="partner-logo-box">
+                    {item.logo}
+                  </div>
+                  <div>
+                    <h3 className="partner-card__title">{item.name}</h3>
+                    <span className="partner-card__sub">{item.sub}</span>
+                  </div>
+                </div>
+                <p className="partner-card__desc">{item.desc}</p>
+                <div className="partner-card__tags">
+                  <span className="partner-tag partner-tag--green">{item.code}</span>
+                  <span className="partner-tag">{item.badge}</span>
+                </div>
+                {item.url && (
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="partner-card__link"
+                  >
+                    <span>Visit {item.name}</span>
+                    <ExternalLink size={14} />
+                  </a>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </section>

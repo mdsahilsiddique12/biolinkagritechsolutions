@@ -1,12 +1,12 @@
 /**
- * Seed Script — Create GrowinAgri Partner + Referral Code
+ * Seed Script — Create KrishakJan Partner + Referral Code KJ01
  *
  * Run: node server/scripts/seedPartners.js
  *
  * Default credentials:
- *   Email:    growinagri@biolinkagri.in
- *   Password: GrowinAgri@2026
- *   Code:     GROWIN01
+ *   Email:    krishakjan@biolinkagri.in
+ *   Password: KrishakJan@2026
+ *   Code:     KJ01
  */
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -25,29 +25,29 @@ async function seed() {
   await mongoose.connect(mongoUri);
   console.log('Connected to MongoDB.');
 
-  // ── GrowinAgri Partner ──
-  let partner = await Partner.findOne({ email: 'growinagri@biolinkagri.in' });
+  // ── KrishakJan Partner ──
+  let partner = await Partner.findOne({ email: 'krishakjan@biolinkagri.in' });
   if (!partner) {
     partner = await Partner.create({
-      name: 'GrowinAgri',
-      email: 'growinagri@biolinkagri.in',
-      password: 'GrowinAgri@2026',
+      name: 'KrishakJan',
+      email: 'krishakjan@biolinkagri.in',
+      password: 'KrishakJan@2026',
       phone: '+91-9000000001',
-      company: 'GrowinAgri Solutions',
+      company: 'KrishakJan Solutions',
       partnerType: 'strategic_partner',
       status: 'active',
       attributionWindowDays: 365,
     });
-    console.log('✅ Created partner: GrowinAgri');
+    console.log('✅ Created partner: KrishakJan');
   } else {
-    console.log('ℹ️  Partner GrowinAgri already exists. Skipping.');
+    console.log('ℹ️  Partner KrishakJan already exists. Skipping.');
   }
 
-  // ── Referral Code GROWIN01 ──
-  let code = await ReferralCode.findOne({ code: 'GROWIN01' });
+  // ── Referral Code KJ01 ──
+  let code = await ReferralCode.findOne({ code: 'KJ01' });
   if (!code) {
     code = await ReferralCode.create({
-      code: 'GROWIN01',
+      code: 'KJ01',
       partnerId: partner._id,
       discountType: 'fixed_per_mt',
       discountValue: 100,       // Farmer gets ₹100/MT discount
@@ -55,15 +55,15 @@ async function seed() {
       commissionValue: 300,     // Partner earns ₹300/MT commission
       active: true,
     });
-    console.log('✅ Created referral code: GROWIN01 (Discount: ₹100/MT, Commission: ₹300/MT)');
+    console.log('✅ Created referral code: KJ01 (Discount: ₹100/MT, Commission: ₹300/MT)');
   } else {
-    console.log('ℹ️  Referral code GROWIN01 already exists. Skipping.');
+    console.log('ℹ️  Referral code KJ01 already exists. Skipping.');
   }
 
   console.log('\n── Partner Login Credentials ──');
-  console.log('  Email:    growinagri@biolinkagri.in');
-  console.log('  Password: GrowinAgri@2026');
-  console.log('  Code:     GROWIN01');
+  console.log('  Email:    krishakjan@biolinkagri.in');
+  console.log('  Password: KrishakJan@2026');
+  console.log('  Code:     KJ01');
   console.log('──────────────────────────────\n');
 
   await mongoose.disconnect();

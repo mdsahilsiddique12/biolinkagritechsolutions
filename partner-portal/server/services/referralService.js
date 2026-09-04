@@ -5,7 +5,7 @@ import { Referral } from '../models/Referral.js';
 import { CommissionLedger } from '../models/CommissionLedger.js';
 
 export async function processReferralAttribution({ farmerName, farmerEmail, farmerMobile, referralCode, volume, grossAmount }) {
-  const code = (referralCode || 'GROWIN01').trim().toUpperCase().replace(/\s+/g, '');
+  const code = (referralCode || 'KJ01').trim().toUpperCase().replace(/\s+/g, '');
   const isDbConnected = mongoose.connection.readyState >= 1;
 
   if (!isDbConnected) return null;
@@ -15,24 +15,26 @@ export async function processReferralAttribution({ farmerName, farmerEmail, farm
     let partner = refCode ? refCode.partnerId : null;
 
     if (!partner) {
-      partner = await Partner.findOne({ email: 'growinagri@biolinkagri.in' });
+      partner = await Partner.findOne({
+        $or: [{ email: 'krishakjan@biolinkagri.in' }, { email: 'growinagri@biolinkagri.in' }],
+      });
       if (!partner) {
         partner = await Partner.create({
-          name: 'Growin Agri',
-          email: 'growinagri@biolinkagri.in',
-          password: 'GrowinAgri@2026',
+          name: 'KrishakJan',
+          email: 'krishakjan@biolinkagri.in',
+          password: 'KrishakJan@2026',
           phone: '+91-9000000001',
-          company: 'GrowinAgri Solutions',
+          company: 'KrishakJan Solutions',
           partnerType: 'strategic_partner',
           status: 'active',
           attributionWindowDays: 365,
         });
       }
 
-      refCode = await ReferralCode.findOne({ code: 'GROWIN01' });
+      refCode = await ReferralCode.findOne({ code: { $in: ['KJ01', 'GROWIN01'] } });
       if (!refCode) {
         refCode = await ReferralCode.create({
-          code: 'GROWIN01',
+          code: 'KJ01',
           partnerId: partner._id,
           discountType: 'fixed_per_mt',
           discountValue: 100,

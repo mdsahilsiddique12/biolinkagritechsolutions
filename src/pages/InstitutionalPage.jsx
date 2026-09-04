@@ -24,9 +24,9 @@ function QuoteCalculator() {
   // Referral states
   const DEFAULT_PARTNERS = [
     {
-      code: 'GROWIN01',
-      partnerName: 'Growin Agri',
-      company: 'GrowinAgri Solutions',
+      code: 'KJ01',
+      partnerName: 'KrishakJan',
+      company: 'KrishakJan Solutions',
       partnerType: 'strategic_partner',
       discountType: 'fixed_per_mt',
       discountValue: 100,
@@ -116,13 +116,13 @@ function QuoteCalculator() {
     const clean = codeToValidate.trim().toUpperCase().replace(/\s+/g, '');
     setValidatingCode(true);
 
-    if (clean === 'GROWIN01' || clean === 'GROWINAGRI') {
-      setReferralPartnerName('Growin Agri');
+    if (clean === 'KJ01' || clean === 'KRISHAKJAN' || clean === 'GROWIN01' || clean === 'GROWINAGRI') {
+      setReferralPartnerName('KrishakJan');
       setReferralDiscountInfo({
         valid: true,
-        code: 'GROWIN01',
-        partnerName: 'Growin Agri',
-        company: 'GrowinAgri Solutions',
+        code: 'KJ01',
+        partnerName: 'KrishakJan',
+        company: 'KrishakJan Solutions',
         discountType: 'fixed_per_mt',
         discountValue: 100,
       });
@@ -253,7 +253,7 @@ function QuoteCalculator() {
         email: emailToSubmit,
         whatsapp: whatsappToSubmit,
         ...formData,
-        referralCode: referralCode || 'GROWIN01',
+        referralCode: referralCode || 'KJ01',
         website: '',
       });
       setStep('success');
@@ -353,7 +353,7 @@ function QuoteCalculator() {
                   value={referralCode}
                   onChange={handlePartnerSelect}
                 >
-                  <option value="">-- Select Partner Code (e.g. GROWIN01) --</option>
+                  <option value="">-- Select Partner Code (e.g. KJ01) --</option>
                   {partnerOptions.map((p) => (
                     <option key={p.code} value={p.code}>
                       {p.code} — {p.partnerName} {p.company ? `(${p.company})` : ''}
@@ -365,7 +365,7 @@ function QuoteCalculator() {
                   type="text"
                   className="input-field"
                   style={{ flex: 1, minWidth: '150px', textTransform: 'uppercase' }}
-                  placeholder="Or enter Code (GROWIN01)"
+                  placeholder="Or enter Code (KJ01)"
                   value={referralCode}
                   onChange={(e) => {
                     const val = e.target.value.toUpperCase();
@@ -378,7 +378,7 @@ function QuoteCalculator() {
               {referralPartnerName ? (
                 <div style={{ marginTop: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--neon-green, #34d399)', fontSize: '0.82rem', fontWeight: 600, background: 'rgba(16, 185, 129, 0.08)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
                   <Gift size={14} />
-                  <span>Referral Benefit Applied — Partner: {referralPartnerName} ({referralCode || 'GROWIN01'})</span>
+                  <span>Referral Benefit Applied — Partner: {referralPartnerName} ({referralCode || 'KJ01'})</span>
                 </div>
               ) : referralCode ? (
                 <span style={{ marginTop: '0.4rem', display: 'block', fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>

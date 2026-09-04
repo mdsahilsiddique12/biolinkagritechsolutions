@@ -163,12 +163,12 @@ router.post(
           discountAmount,
           finalTotal: Math.max(0, quote.total - discountAmount),
         };
-      } else if (code === 'GROWIN01' || code === 'GROWINAGRI') {
+      } else if (code === 'KJ01' || code === 'KRISHAKJAN' || code === 'GROWIN01' || code === 'GROWINAGRI') {
         const discountAmount = Math.round(100 * tons);
         referralInfo = {
-          code: 'GROWIN01',
-          partnerName: 'Growin Agri',
-          company: 'GrowinAgri Solutions',
+          code: 'KJ01',
+          partnerName: 'KrishakJan',
+          company: 'KrishakJan Solutions',
           discountType: 'fixed_per_mt',
           discountValue: 100,
           discountAmount,
@@ -205,7 +205,7 @@ router.post(
     };
 
     // Record referral attribution live in partner ledger & MongoDB tables
-    const refCodeStr = payload.referralCode || 'GROWIN01';
+    const refCodeStr = payload.referralCode || 'KJ01';
     
     recordLiveBooking({
       farmerName: payload.name,
@@ -239,7 +239,7 @@ router.post(
       metadata: {
         company: payload.company || '',
         quote: draft.quote,
-        referralCode: payload.referralCode || 'GROWIN01',
+        referralCode: payload.referralCode || 'KJ01',
       },
     });
 
