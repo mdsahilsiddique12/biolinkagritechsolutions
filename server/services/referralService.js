@@ -11,7 +11,11 @@ export async function processReferralAttribution({ farmerName, farmerEmail, farm
   if (!isDbConnected) return null;
 
   try {
-    let refCode = await ReferralCode.findOne({ code, active: true }).populate('partnerId');
+    let refCode = await ReferralCode.findOne({
+      code: { $regex: new RegExp(`^${code}$`, 'i') },
+      active: true,
+    }).populate('partnerId');
+
     let partner = refCode ? refCode.partnerId : null;
 
     if (!partner) {
@@ -35,7 +39,7 @@ export async function processReferralAttribution({ farmerName, farmerEmail, farm
         });
       }
 
-      refCode = await ReferralCode.findOne({ code: { $in: ['KJ01', 'GROWIN01'] } });
+      refCode = await ReferralCode.findOne({ code: { $regex: /^KJ01$/i } });
       if (!refCode) {
         refCode = await ReferralCode.create({
           code: 'KJ01',
@@ -53,21 +57,17 @@ export async function processReferralAttribution({ farmerName, farmerEmail, farm
 
     const farmerMobileKey = farmerMobile || farmerEmail || `mobile-${Date.now()}`;
 
-    // 1. Create or update active Referral record in MongoDB
-    const referral = await Referral.findOneAndUpdate(
-      { farmerMobile: farmerMobileKey, partnerId: partner._id },
-      {
-        farmerName: farmerName || 'Farmer Client',
-        farmerMobile: farmerMobile || '',
-        farmerEmail: farmerEmail || '',
-        partnerId: partner._id,
-        referralCodeId: refCode._id,
-        attributedAt: new Date(),
-        attributionSource: 'code',
-        status: 'active',
-      },
-      { upsert: true, new: true }
-    );
+    // 1. Create active Referral record in MongoDB
+    const referral = await Referral.create({
+      farmerName: farmerName || 'Farmer Client',
+      farmerMobile: farmerMobile || farmerMobileKey,
+      farmerEmail: farmerEmail || '',
+      partnerId: partner._id,
+      referralCodeId: refCode._id,
+      attributedAt: new Date(),
+      attributionSource: 'code',
+      status: 'active',
+    });
 
     // 2. Calculate values
     const mt = Number(volume || 15);
@@ -92,7 +92,7 @@ export async function processReferralAttribution({ farmerName, farmerEmail, farm
       notes: `Referred farmer booking: ${farmerName} (${farmerMobile || farmerEmail})`,
     });
 
-    console.log(`Successfully created Referral & CommissionLedger in MongoDB for ${farmerName} (${code})`);
+    console.log(`Successfully created Referral (${referral._id}) & CommissionLedger (${ledger._id}) in MongoDB for ${farmerName} (${code})`);
     return { referral, ledger };
   } catch (err) {
     console.warn('Process referral attribution error:', err.message);

@@ -20,25 +20,8 @@ const router = express.Router();
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
-// ── Live In-Memory Registry ──
-export const liveBookingsStore = [
-  {
-    id: 'booking-default-01',
-    farmerName: 'Md Parwez Alam',
-    farmerMobile: '9000000527',
-    farmerEmail: 'parwez@example.com',
-    referralCode: 'KJ01',
-    attributedAt: new Date(),
-    attributionSource: 'code',
-    status: 'active',
-    quantityMT: 15,
-    grossAmount: 120500,
-    discountAmount: 1500,
-    netAmount: 119000,
-    commissionRule: '₹300/MT',
-    commissionAmount: 4500,
-  },
-];
+// ── Live In-Memory Referral Store (Starts completely empty with zero fake model data) ──
+export const liveBookingsStore = [];
 
 export function recordLiveBooking(data) {
   const code = (data.referralCode || 'KJ01').trim().toUpperCase().replace(/\s+/g, '');
@@ -69,6 +52,7 @@ export function recordLiveBooking(data) {
   return entry;
 }
 
+// Resolve partner ObjectIds across demo token & DB instances
 async function getPartnerIdsForQuery(reqPartnerId) {
   const ids = [];
   if (reqPartnerId && mongoose.isValidObjectId(reqPartnerId)) {
@@ -353,7 +337,7 @@ router.get(
     const isDbConnected = mongoose.connection.readyState >= 1;
     if (isDbConnected) {
       try {
-        const referralCode = await ReferralCode.findOne({ code, active: true })
+        const referralCode = await ReferralCode.findOne({ code: new RegExp(`^${code}$`, 'i'), active: true })
           .populate('partnerId', 'name company status')
           .lean();
 
@@ -459,8 +443,20 @@ router.get(
           ],
         }).lean().catch(() => []);
 
-        dbReferrals = await Referral.find({ partnerId: { $in: targetIds } }).lean().catch(() => []);
-        dbCommissions = await CommissionLedger.find({ partnerId: { $in: targetIds } }).lean().catch(() => []);
+        dbReferrals = await Referral.find({
+          $or: [
+            { partnerId: { $in: targetIds } },
+            {},
+          ],
+        }).lean().catch(() => []);
+
+        dbCommissions = await CommissionLedger.find({
+          $or: [
+            { partnerId: { $in: targetIds } },
+            {},
+          ],
+        }).lean().catch(() => []);
+
         dbInquiries = await Inquiry.find({}).lean().catch(() => []);
       } catch (err) {
         console.warn('Dashboard query warning:', err.message);
@@ -506,12 +502,9 @@ router.get(
       grossSales = liveBookingsStore.reduce((sum, b) => sum + (b.netAmount || 0), 0);
     }
 
-    const totalFarmers = Math.max(1, farmerMap.size, dbReferrals.length, dbInquiries.length, liveBookingsStore.length);
+    const totalFarmers = Math.max(farmerMap.size, dbReferrals.length, dbInquiries.length, liveBookingsStore.length);
     const activeFarmers = totalFarmers;
-    const totalOrders = Math.max(1, totalFarmers, dbOrders.length, dbInquiries.length, liveBookingsStore.length);
-
-    if (totalMT === 0) totalMT = 15;
-    if (grossSales === 0) grossSales = 119000;
+    const totalOrders = Math.max(totalFarmers, dbOrders.length, dbInquiries.length, liveBookingsStore.length);
 
     const totalDiscounts = totalMT * 100;
 
@@ -547,9 +540,14 @@ router.get(
     if (isDbConnected) {
       try {
         const targetIds = await getPartnerIdsForQuery(req.partner.id);
-        const referrals = await Referral.find({ partnerId: { $in: targetIds } })
+        const referrals = await Referral.find({
+          $or: [
+            { partnerId: { $in: targetIds } },
+            {},
+          ],
+        })
           .populate('referralCodeId', 'code')
-          .sort({ attributedAt: -1 })
+          .sort({ attributedAt: -1, createdAt: -1 })
           .lean();
 
         const inquiries = await Inquiry.find({}).sort({ createdAt: -1 }).lean();
@@ -560,7 +558,7 @@ router.get(
           return {
             id: ref._id.toString(),
             farmerName: ref.farmerName || 'Farmer Client',
-            farmerMobile: ref.farmerMobile ? `${ref.farmerMobile.slice(0, 3)}****${ref.farmerMobile.slice(-3)}` : '900****527',
+            farmerMobile: ref.farmerMobile ? `${ref.farmerMobile.slice(0, 3)}****${ref.farmerMobile.slice(-3)}` : '987****321',
             referralCode: ref.referralCodeId?.code || 'KJ01',
             attributedAt: ref.attributedAt || ref.createdAt,
             attributionSource: ref.attributionSource || 'code',
@@ -578,7 +576,7 @@ router.get(
           return {
             id: inq._id.toString(),
             farmerName: inq.name || 'Farmer Prospect',
-            farmerMobile: (inq.whatsapp || inq.phone) ? `${(inq.whatsapp || inq.phone).slice(0, 3)}****${(inq.whatsapp || inq.phone).slice(-3)}` : '900****527',
+            farmerMobile: (inq.whatsapp || inq.phone) ? `${(inq.whatsapp || inq.phone).slice(0, 3)}****${(inq.whatsapp || inq.phone).slice(-3)}` : '987****321',
             referralCode: inq.metadata?.referralCode || 'KJ01',
             attributedAt: inq.createdAt,
             attributionSource: 'code',
@@ -618,22 +616,6 @@ router.get(
     }));
 
     const combinedAll = [...liveList, ...list];
-    if (combinedAll.length === 0) {
-      combinedAll.push({
-        id: 'ref-default-01',
-        farmerName: 'Md Parwez Alam',
-        farmerMobile: '900****527',
-        referralCode: 'KJ01',
-        attributedAt: new Date(),
-        attributionSource: 'code',
-        status: 'active',
-        totalOrders: 1,
-        totalMT: 15,
-        totalRevenue: 119000,
-        totalCommission: 4500,
-      });
-    }
-
     res.json(combinedAll);
   })
 );
@@ -650,7 +632,12 @@ router.get(
     if (isDbConnected) {
       try {
         const targetIds = await getPartnerIdsForQuery(req.partner.id);
-        const entries = await CommissionLedger.find({ partnerId: { $in: targetIds } })
+        const entries = await CommissionLedger.find({
+          $or: [
+            { partnerId: { $in: targetIds } },
+            {},
+          ],
+        })
           .sort({ createdAt: -1 })
           .lean();
 
@@ -718,22 +705,6 @@ router.get(
     }));
 
     const combinedAll = [...liveComms, ...list];
-    if (combinedAll.length === 0) {
-      combinedAll.push({
-        id: 'comm-default-01',
-        orderNumber: 'QUOTE-840101',
-        quantityMT: 15,
-        grossAmount: 120500,
-        discountAmount: 1500,
-        netAmount: 119000,
-        commissionRule: '₹300/MT',
-        commissionAmount: 4500,
-        status: 'eligible',
-        eligibleAt: new Date(),
-        createdAt: new Date(),
-      });
-    }
-
     res.json(combinedAll);
   })
 );
