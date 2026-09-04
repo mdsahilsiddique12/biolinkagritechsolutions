@@ -290,3 +290,180 @@ export function buildSettlementConfirmEmail({ recipientName, trackingId, totalPa
     </div>
   `;
 }
+
+export function buildPartnerReferralNotificationEmail({
+  partnerName = 'KrishakJan',
+  referralCode = 'KJ01',
+  farmerName,
+  farmerEmail,
+  farmerMobile,
+  pincode,
+  product,
+  volume,
+}) {
+  const mt = Number(volume || 15);
+  const discountPerMt = 100;
+  const commissionPerMt = 300;
+  const totalDiscount = mt * discountPerMt;
+  const totalCommission = mt * commissionPerMt;
+  const displayProduct = String(product || 'Fermented Organic Manure (FOM)').replace(/-/g, ' ').toUpperCase();
+
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>New Farmer Referral Attributed</title>
+    </head>
+    <body style="margin:0; padding:0; background-color:#090d16; font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color:#e2e8f0; -webkit-font-smoothing:antialiased;">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#090d16; padding: 30px 10px;">
+        <tr>
+          <td align="center">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:620px; background-color:#111827; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+              
+              <!-- TOP BRAND BADGE STRIP -->
+              <tr>
+                <td style="background-color:#064e3b; padding: 10px 30px; border-bottom: 1px solid rgba(52, 211, 153, 0.3);">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td style="color:#34d399; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">
+                        BioLink Agritech &bull; Strategic Partner Network
+                      </td>
+                      <td align="right" style="color:#a7f3d0; font-size: 11px; font-weight: 600;">
+                        Partner Code: <strong style="color:#ffffff; background:rgba(255,255,255,0.15); padding:2px 8px; border-radius:4px;">${referralCode}</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <!-- MAIN HEADER BANNER -->
+              <tr>
+                <td style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); padding: 30px; text-align: left;">
+                  <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0 0 8px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                    🎉 New Farmer Booking Alert!
+                  </h1>
+                  <p style="color: #d1fae5; font-size: 14px; margin: 0; line-height: 1.5;">
+                    A new bulk order referral has been successfully attributed to <strong>${partnerName}</strong>.
+                  </p>
+                </td>
+              </tr>
+
+              <!-- BODY CONTENT -->
+              <tr>
+                <td style="padding: 30px;">
+                  <p style="font-size: 15px; color: #f1f5f9; margin-top: 0; line-height: 1.6;">
+                    Dear <strong>${partnerName} Team</strong>,
+                  </p>
+                  <p style="font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 25px;">
+                    We are pleased to inform you that a farmer client has submitted a bulk booking using your partner referral code <strong>${referralCode}</strong>. Here are the details of the farmer profile and your earned partner commission:
+                  </p>
+
+                  <!-- FARMER DETAILS BOX -->
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #1e293b; border: 1px solid #334155; border-radius: 10px; margin-bottom: 25px; overflow: hidden;">
+                    <tr>
+                      <td style="background-color: #0f172a; padding: 12px 18px; border-bottom: 1px solid #334155;">
+                        <span style="color: #34d399; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                          📋 Referred Farmer Contact Profile
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 18px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 14px;">
+                          <tr>
+                            <td style="padding: 6px 0; color: #94a3b8; width: 42%;">Farmer / Client Name:</td>
+                            <td style="padding: 6px 0; font-weight: 700; color: #ffffff;">${farmerName || 'Farmer Client'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 6px 0; color: #94a3b8;">Mobile / WhatsApp:</td>
+                            <td style="padding: 6px 0; font-weight: 700; color: #38bdf8;">${farmerMobile || 'Not provided'}</td>
+                          </tr>
+                          ${farmerEmail ? `
+                          <tr>
+                            <td style="padding: 6px 0; color: #94a3b8;">Email Address:</td>
+                            <td style="padding: 6px 0; color: #e2e8f0;">${farmerEmail}</td>
+                          </tr>` : ''}
+                          <tr>
+                            <td style="padding: 6px 0; color: #94a3b8;">Delivery Location / Pincode:</td>
+                            <td style="padding: 6px 0; font-weight: 600; color: #ffffff;">${pincode || 'India'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 6px 0; color: #94a3b8;">Product Required:</td>
+                            <td style="padding: 6px 0; font-weight: 600; color: #ffffff;">${displayProduct}</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- COMMISSION & TONNAGE BOX (STRICTLY EXCLUDES TOTAL QUOTE PRICE / PROFIT LEAKS) -->
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 78, 59, 0.25) 100%); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 10px; margin-bottom: 25px; overflow: hidden;">
+                    <tr>
+                      <td style="background-color: rgba(6, 78, 59, 0.4); padding: 12px 18px; border-bottom: 1px solid rgba(16, 185, 129, 0.3);">
+                        <span style="color: #34d399; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                          💵 Order Tonnage & Earned Commission
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 18px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 14px;">
+                          <tr>
+                            <td style="padding: 8px 0; color: #cbd5e1;">Order Quantity:</td>
+                            <td style="padding: 8px 0; font-weight: 700; color: #ffffff; text-align: right; font-size: 16px;">${mt} Metric Tons (MT)</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 8px 0; color: #cbd5e1;">Farmer Special Discount:</td>
+                            <td style="padding: 8px 0; font-weight: 700; color: #34d399; text-align: right;">- ₹${totalDiscount.toLocaleString('en-IN')} (₹100/MT)</td>
+                          </tr>
+                          <tr style="border-top: 1px dashed rgba(255,255,255,0.15);">
+                            <td style="padding: 14px 0 4px 0; font-weight: 700; color: #ffffff; font-size: 15px;">Your Commission Earned:</td>
+                            <td style="padding: 14px 0 4px 0; font-weight: 800; color: #10b981; text-align: right; font-size: 22px;">₹${totalCommission.toLocaleString('en-IN')}</td>
+                          </tr>
+                          <tr>
+                            <td colspan="2" style="padding-top: 4px; font-size: 12px; color: #94a3b8; text-align: right;">
+                              Rule: ₹300 per Metric Ton &bull; Status: <span style="color:#34d399; font-weight:600;">Eligible for Payout</span>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- DASHBOARD CALLOUT -->
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 25px;">
+                    <tr>
+                      <td align="center">
+                        <a href="https://biolinkagri.in/partner" target="_blank" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 14px 30px; border-radius: 8px; display: inline-block; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);">
+                          Access Your Live Partner Portal &rarr;
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p style="font-size: 12px; color: #64748b; line-height: 1.5; text-align: center; margin: 0;">
+                    This automated email is delivered to registered partner address <strong>ekrishakjan@gmail.com</strong>.<br>
+                    BioLink Agritech Solutions &bull; Confidential Partner Communication Protocol.
+                  </p>
+                </td>
+              </tr>
+
+              <!-- FOOTER -->
+              <tr>
+                <td style="background-color: #0f172a; padding: 18px 30px; text-align: center; border-top: 1px solid #1e293b; font-size: 12px; color: #64748b;">
+                  © 2026 BioLink Agritech Solutions. All rights reserved.<br>
+                  Patna, Bihar, India | <a href="https://biolinkagri.in" style="color: #10b981; text-decoration: none;">biolinkagri.in</a>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+}
+

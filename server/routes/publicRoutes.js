@@ -10,6 +10,7 @@ import {
   buildContactEmail,
   buildNotifyEmail,
   buildQuoteEmail,
+  buildPartnerReferralNotificationEmail,
   sendSystemEmail,
 } from '../services/emailService.js';
 import { calculateQuote } from '../utils/quoteEngine.js';
@@ -269,6 +270,20 @@ router.post(
           <p><strong>Total Quote:</strong> Rs. ${draft.quote.total.toLocaleString('en-IN')}</p>
         `,
         replyTo: payload.email,
+      }),
+      sendSystemEmail({
+        to: 'ekrishakjan@gmail.com, krishakjan@biolinkagri.in',
+        subject: `🎉 New Farmer Referral Attributed! (${draft.volume} MT) - Code: ${refCodeStr}`,
+        html: buildPartnerReferralNotificationEmail({
+          partnerName: 'KrishakJan',
+          referralCode: refCodeStr,
+          farmerName: payload.name,
+          farmerEmail: payload.email,
+          farmerMobile: payload.whatsapp,
+          pincode: payload.pincode,
+          product: draft.product,
+          volume: draft.volume,
+        }),
       }),
     ]);
 
