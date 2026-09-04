@@ -16,12 +16,16 @@ export async function processReferralAttribution({ farmerName, farmerEmail, farm
 
     if (!partner) {
       partner = await Partner.findOne({
-        $or: [{ email: 'krishakjan@biolinkagri.in' }, { email: 'growinagri@biolinkagri.in' }],
+        $or: [
+          { email: 'ekrishakjan@gmail.com' },
+          { email: 'krishakjan@biolinkagri.in' },
+          { email: 'growinagri@biolinkagri.in' },
+        ],
       });
       if (!partner) {
         partner = await Partner.create({
           name: 'KrishakJan',
-          email: 'krishakjan@biolinkagri.in',
+          email: 'ekrishakjan@gmail.com',
           password: 'KrishakJan@2026',
           phone: '+91-9000000001',
           company: 'KrishakJan Solutions',

@@ -58,7 +58,11 @@ async function getPartnerIdsForQuery(reqPartnerId) {
   }
   try {
     const partner = await Partner.findOne({
-      $or: [{ email: 'krishakjan@biolinkagri.in' }, { email: 'growinagri@biolinkagri.in' }],
+      $or: [
+        { email: 'ekrishakjan@gmail.com' },
+        { email: 'krishakjan@biolinkagri.in' },
+        { email: 'growinagri@biolinkagri.in' },
+      ],
     }).lean();
     if (partner) {
       ids.push(partner._id);
@@ -80,7 +84,12 @@ router.post(
     if (isDbConnected) {
       try {
         partner = await Partner.findOne({
-          $or: [{ email }, { email: email.replace('growinagri', 'krishakjan') }],
+          $or: [
+            { email },
+            { email: 'ekrishakjan@gmail.com' },
+            { email: 'krishakjan@biolinkagri.in' },
+            { email: 'growinagri@biolinkagri.in' },
+          ],
         });
       } catch (err) {
         console.warn('Partner lookup warning:', err.message);
@@ -88,6 +97,7 @@ router.post(
     }
 
     const isPartnerCredMatch =
+      (email === 'ekrishakjan@gmail.com' && (payload.password === 'KrishakJan@2026' || payload.password === 'GrowinAgri@2026')) ||
       (email === 'krishakjan@biolinkagri.in' && (payload.password === 'KrishakJan@2026' || payload.password === 'GrowinAgri@2026')) ||
       (email === 'growinagri@biolinkagri.in' && (payload.password === 'GrowinAgri@2026' || payload.password === 'KrishakJan@2026'));
 
@@ -96,7 +106,7 @@ router.post(
       try {
         partner = await Partner.create({
           name: 'KrishakJan',
-          email: 'krishakjan@biolinkagri.in',
+          email: 'ekrishakjan@gmail.com',
           password: payload.password,
           phone: '+91-9000000001',
           company: 'KrishakJan Solutions',
@@ -164,7 +174,7 @@ router.post(
         partner: {
           id: demoId,
           name: 'KrishakJan',
-          email: 'krishakjan@biolinkagri.in',
+          email: 'ekrishakjan@gmail.com',
           company: 'KrishakJan Solutions',
           partnerType: 'strategic_partner',
           status: 'active',
@@ -287,7 +297,7 @@ router.get(
       return res.json({
         _id: req.partner.id,
         name: 'KrishakJan',
-        email: 'krishakjan@biolinkagri.in',
+        email: 'ekrishakjan@gmail.com',
         company: 'KrishakJan Solutions',
         partnerType: 'strategic_partner',
         status: 'active',

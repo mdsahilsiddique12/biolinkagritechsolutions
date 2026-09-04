@@ -1,12 +1,13 @@
 /**
- * Seed Script — Create KrishakJan Partner + Referral Code KJ01
+ * Seed Script — Create/Update KrishakJan Partner + Referral Code KJ01
  *
  * Run: node partner-portal/server/scripts/seedPartners.js
  *
- * Default credentials:
- *   Email:    krishakjan@biolinkagri.in
- *   Password: KrishakJan@2026
- *   Code:     KJ01
+ * Credentials:
+ *   Primary Email: ekrishakjan@gmail.com
+ *   Alt Email:     krishakjan@biolinkagri.in
+ *   Password:      KrishakJan@2026
+ *   Code:          KJ01
  */
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -26,11 +27,18 @@ async function seed() {
   console.log('Connected to MongoDB.');
 
   // ── KrishakJan Partner ──
-  let partner = await Partner.findOne({ email: 'krishakjan@biolinkagri.in' });
+  let partner = await Partner.findOne({
+    $or: [
+      { email: 'ekrishakjan@gmail.com' },
+      { email: 'krishakjan@biolinkagri.in' },
+      { email: 'growinagri@biolinkagri.in' },
+    ],
+  });
+
   if (!partner) {
     partner = await Partner.create({
       name: 'KrishakJan',
-      email: 'krishakjan@biolinkagri.in',
+      email: 'ekrishakjan@gmail.com',
       password: 'KrishakJan@2026',
       phone: '+91-9000000001',
       company: 'KrishakJan Solutions',
@@ -38,9 +46,14 @@ async function seed() {
       status: 'active',
       attributionWindowDays: 365,
     });
-    console.log('✅ Created partner: KrishakJan');
+    console.log('✅ Created partner: KrishakJan (Email: ekrishakjan@gmail.com)');
   } else {
-    console.log('ℹ️  Partner KrishakJan already exists. Skipping.');
+    partner.email = 'ekrishakjan@gmail.com';
+    partner.name = 'KrishakJan';
+    partner.company = 'KrishakJan Solutions';
+    partner.status = 'active';
+    await partner.save();
+    console.log('✅ Updated partner record to primary email: ekrishakjan@gmail.com');
   }
 
   // ── Referral Code KJ01 ──
@@ -57,14 +70,18 @@ async function seed() {
     });
     console.log('✅ Created referral code: KJ01 (Discount: ₹100/MT, Commission: ₹300/MT)');
   } else {
-    console.log('ℹ️  Referral code KJ01 already exists. Skipping.');
+    code.partnerId = partner._id;
+    code.active = true;
+    await code.save();
+    console.log('✅ Linked referral code KJ01 to KrishakJan partner in MongoDB.');
   }
 
-  console.log('\n── Partner Login Credentials ──');
-  console.log('  Email:    krishakjan@biolinkagri.in');
-  console.log('  Password: KrishakJan@2026');
-  console.log('  Code:     KJ01');
-  console.log('──────────────────────────────\n');
+  console.log('\n── Partner Credentials ──');
+  console.log('  Primary Email: ekrishakjan@gmail.com');
+  console.log('  Alt Email:     krishakjan@biolinkagri.in');
+  console.log('  Password:      KrishakJan@2026');
+  console.log('  Code:          KJ01');
+  console.log('─────────────────────────\n');
 
   await mongoose.disconnect();
   console.log('Done. Disconnected from MongoDB.');
