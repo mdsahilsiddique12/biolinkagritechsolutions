@@ -10,8 +10,8 @@ const splitCsv = (value = '') =>
 
 export const config = {
   port: Number(process.env.PORT || 5000),
-  mongoUri: process.env.MONGO_URI,
-  jwtSecret: process.env.JWT_SECRET,
+  mongoUri: process.env.MONGO_URI || process.env.MONGODB_URI || process.env.DATABASE_URL,
+  jwtSecret: process.env.JWT_SECRET || 'biolink-secret-key-change-in-production',
   clientOrigins: splitCsv(process.env.CLIENT_ORIGIN || 'http://localhost:5173'),
   emailProvider: process.env.EMAIL_PROVIDER || 'gmail',
   emailFromName: process.env.EMAIL_FROM_NAME || 'BioLink Agritech',

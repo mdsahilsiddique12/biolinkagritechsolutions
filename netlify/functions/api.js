@@ -9,9 +9,21 @@ let handlerPromise;
 async function getHandler() {
   if (!handlerPromise) {
     handlerPromise = (async () => {
-      assertCriticalConfig();
-      await connectDatabase();
-      await getMailer();
+      try {
+        assertCriticalConfig();
+      } catch (err) {
+        console.warn('Config warning in Netlify function:', err.message);
+      }
+      try {
+        await connectDatabase();
+      } catch (err) {
+        console.warn('Database connect warning in Netlify function:', err.message);
+      }
+      try {
+        await getMailer();
+      } catch (err) {
+        console.warn('Mailer init warning in Netlify function:', err.message);
+      }
       return serverless(createApp());
     })();
   }

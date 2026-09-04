@@ -4,7 +4,7 @@ dotenv.config();
 
 export const config = {
   port: Number(process.env.PORT || 5001),
-  mongoUri: process.env.MONGO_URI,
+  mongoUri: process.env.MONGO_URI || process.env.MONGODB_URI || process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET || 'partner-secret-key-change-in-production',
   clientOrigins: (process.env.CLIENT_ORIGIN || 'http://localhost:5174,http://localhost:5173')
     .split(',')
