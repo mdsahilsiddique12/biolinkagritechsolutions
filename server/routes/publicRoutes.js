@@ -334,7 +334,15 @@ router.post(
   '/sample/order',
   asyncHandler(async (req, res) => {
     const payload = sampleOrderSchema.parse(req.body);
-    const sampleRefId = `SMP-${Date.now().toString(36).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`;
+
+    // Generate unique, specific, sequential Sample Reference ID (SMP-YYYYMMDD-SEQUENCE)
+    const count = await Inquiry.countDocuments({ kind: 'sample_order' });
+    const orderSeq = String(count + 1001).padStart(5, '0');
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const sampleRefId = `SMP-${yyyy}${mm}${dd}-${orderSeq}`;
 
     const inquiry = await Inquiry.create({
       kind: 'sample_order',
