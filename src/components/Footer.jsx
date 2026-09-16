@@ -36,6 +36,7 @@ export default function Footer() {
           <div className="footer__col">
             <h4 className="footer__col-title">Navigation</h4>
             <Link to="/" className="footer__link">Home</Link>
+            <Link to="/sample" className="footer__link">Order Sample Pack (20/30/50kg)</Link>
             <Link to="/institutional" className="footer__link">Institutional Supply</Link>
             <Link to="/shop" className="footer__link">Retail (Coming Soon)</Link>
             <Link to="/help" className="footer__link">Help Center</Link>

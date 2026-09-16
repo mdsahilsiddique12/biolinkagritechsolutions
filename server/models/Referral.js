@@ -8,14 +8,15 @@ const ReferralSchema = new mongoose.Schema(
     partnerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Partner',
-      required: true,
+      required: false,
       index: true,
     },
     referralCodeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'ReferralCode',
-      required: true,
+      required: false,
     },
+    referralCode: { type: String, trim: true, uppercase: true, index: true },
     attributedAt: { type: Date, default: Date.now },
     attributionSource: {
       type: String,
@@ -25,16 +26,25 @@ const ReferralSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'expired'],
+      enum: ['active', 'expired', 'completed', 'pending'],
       default: 'active',
       required: true,
     },
+    volume: { type: Number, default: 15 },
+    grossAmount: { type: Number },
+    discountAmount: { type: Number },
+    netAmount: { type: Number },
+    commissionAmount: { type: Number },
+    product: { type: String },
+    pincode: { type: String },
+    notes: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
-// Compound index: one active referral per farmer-partner pair
-ReferralSchema.index({ farmerMobile: 1, partnerId: 1 }, { unique: true, sparse: true });
+// Index on farmer mobile and partner ID
+ReferralSchema.index({ farmerMobile: 1, partnerId: 1 }, { sparse: true });
 
 export const Referral =
   mongoose.models.Referral || mongoose.model('Referral', ReferralSchema);
+

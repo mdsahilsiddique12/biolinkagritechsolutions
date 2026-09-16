@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>@font-face { font-family: 'Lora'; src: local('Lora'); }
+@font-face { font-family: 'Poppins'; src: local('Poppins'); }
+
+:root{
+  --paper:#F5F6EE;
+  --paper-2:#FBFAF3;
+  --ink:#212A1D;
+  --ink-soft:#4B5442;
+  --forest:#1E3B2A;
+  --forest-2:#2E5240;
+  --soil:#7A4E2E;
+  --soil-deep:#5B3A22;
+  --gold:#C7963C;
+  --leaf:#6E8F45;
+  --leaf-soft:#DCE6CC;
+  --line:#DAD5C2;
+  --white:#FFFFFF;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+body{
+  width:1000px;
+  background:var(--paper);
+  font-family:'Poppins','DejaVu Sans',sans-serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+.sheet{
+  position:relative;
+  width:1000px;
+  background:
+    radial-gradient(circle at 92% 6%, rgba(110,143,69,0.10), transparent 40%),
+    radial-gradient(circle at 4% 96%, rgba(122,78,46,0.10), transparent 38%),
+    var(--paper);
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+.sheet::before{
+  content:"";
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--gold), var(--leaf), var(--forest-2), var(--leaf), var(--gold));
+}
+
+/* ---------- header ---------- */
+.header{
+  background:linear-gradient(120deg, var(--forest) 0%, var(--forest-2) 78%);
+  padding:34px 46px 30px 46px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+}
+.header::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-8px; height:8px;
+  background:repeating-linear-gradient(-45deg, var(--gold) 0 14px, var(--leaf) 14px 28px);
+  opacity:0.9;
+}
+.brand{ display:flex; align-items:center; }
+.brand-mark{ margin-right:16px; }
+.brand-mark{
+  width:56px; height:56px; border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #cfe3a9, var(--leaf) 60%, var(--forest-2) 100%);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 3px rgba(255,255,255,0.18);
+  flex:none;
+}
+.brand-mark svg{ width:30px; height:30px; }
+.brand-name{ font-family:'Lora', serif; font-size:26px; font-weight:600; color:var(--white); letter-spacing:0.3px; }
+.brand-sub{ font-size:11.5px; letter-spacing:2.5px; color:var(--leaf-soft); text-transform:uppercase; margin-top:3px; }
+.header-right{ text-align:right; color:var(--white); }
+.header-right .site{ font-family:'Lora', serif; font-size:16px; color:var(--gold); }
+.header-right .tag{ font-size:10.5px; color:#D7E4C6; margin-top:4px; letter-spacing:0.5px; }
+
+/* ---------- title block ---------- */
+.title-block{ padding:34px 46px 8px 46px; }
+.eyebrow{
+  font-size:11px; letter-spacing:3px; color:var(--soil); text-transform:uppercase; font-weight:600;
+}
+.title{
+  font-family:'Lora', serif; font-size:32px; color:var(--forest); margin-top:8px; line-height:1.25;
+}
+.title span{ color:var(--soil); }
+.meta-row{
+  display:flex; margin-top:16px; padding-top:16px; border-top:1px solid var(--line);
+  flex-wrap:wrap;
+}
+.meta-item{ margin-right:40px; }
+.meta-item .k{ font-size:9.5px; letter-spacing:1.6px; text-transform:uppercase; color:var(--ink-soft); }
+.meta-item .v{ font-size:14px; font-weight:600; color:var(--ink); margin-top:3px; }
+
+/* ---------- info panels ---------- */
+.panels{ display:flex; padding:26px 46px 6px 46px; }
+.panel{
+  flex:1; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:20px 22px;
+}
+.panel:first-child{ margin-right:20px; }
+.panel-head{
+  display:flex; align-items:center; margin-bottom:14px;
+}
+.panel-head .dot{ width:8px; height:8px; border-radius:50%; background:var(--leaf); margin-right:8px; }
+.panel-head h3{ font-family:'Lora', serif; font-size:15px; color:var(--forest); letter-spacing:0.3px; }
+.info-row{ display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed var(--line); font-size:12.5px; }
+.info-row:last-child{ border-bottom:none; }
+.info-row .k{ color:var(--ink-soft); }
+.info-row .v{ font-weight:600; color:var(--ink); text-align:right; }
+
+/* ---------- nutrient profile (visual bars) ---------- */
+.profile{ padding:28px 46px 6px 46px; }
+.profile-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px; }
+.profile-head h3{ font-family:'Lora', serif; font-size:17px; color:var(--forest); }
+.profile-head .note{ font-size:10.5px; color:var(--ink-soft); font-style:italic; }
+
+.bar-row{ margin-bottom:14px; }
+.bar-label-row{ display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px; }
+.bar-label-row .name{ font-weight:600; color:var(--ink); }
+.bar-label-row .method{ color:var(--ink-soft); font-size:10.5px; }
+.bar-label-row .val{ font-weight:700; color:var(--forest); }
+.bar-track{
+  height:11px; background:#E9E6D6; border-radius:6px; overflow:hidden; position:relative;
+  border:1px solid var(--line);
+}
+.bar-fill{
+  height:100%; border-radius:6px 0 0 6px;
+  background:linear-gradient(90deg, var(--leaf), var(--gold));
+}
+
+/* ---------- certified analysis table ---------- */
+.table-section{ padding:8px 46px 6px 46px; }
+.table-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+.table-head h3{ font-family:'Lora', serif; font-size:17px; color:var(--forest); }
+.table-head .badge{
+  font-size:9px; letter-spacing:1.6px; text-transform:uppercase; color:var(--white);
+  background:var(--soil); padding:4px 10px; border-radius:20px; font-weight:600;
+}
+.coa-wrap{
+  border:1px solid var(--forest); border-radius:10px; overflow:hidden;
+  box-shadow:0 6px 16px rgba(30,59,42,0.08);
+}
+table.coa{ width:100%; border-collapse:collapse; background:var(--white); }
+table.coa thead th{
+  background:var(--forest); color:var(--white);
+  font-size:9.5px; letter-spacing:1px; text-transform:uppercase; font-weight:600;
+  text-align:left; padding:11px 12px;
+  border-right:1px solid rgba(255,255,255,0.14);
+}
+table.coa thead th:last-child{ border-right:none; }
+table.coa thead th.num{ text-align:center; width:34px; }
+table.coa tbody td{
+  padding:11px 12px; font-size:11.6px; border-top:1px solid var(--line); border-right:1px solid var(--line);
+  vertical-align:middle; color:var(--ink);
+}
+table.coa tbody td:last-child{ border-right:none; }
+table.coa tbody tr:nth-child(even) td{ background:#F8F7EF; }
+table.coa tbody td.num{ text-align:center; color:var(--ink-soft); font-weight:600; font-size:10.5px; }
+table.coa tbody td.param{ font-weight:700; color:var(--forest); }
+table.coa tbody td.param .method{ display:block; font-weight:400; color:var(--ink-soft); font-size:9.5px; margin-top:2px; }
+table.coa tbody td.result{
+  font-weight:700; color:var(--soil-deep); font-variant-numeric:tabular-nums;
+  font-size:13px; white-space:nowrap;
+}
+table.coa tbody td.range{ color:var(--ink-soft); font-variant-numeric:tabular-nums; white-space:nowrap; }
+table.coa tbody td.dial{ min-width:150px; }
+
+.dial-track{
+  position:relative; height:8px; background:#E9E6D6; border-radius:4px; border:1px solid var(--line);
+}
+.dial-band{ position:absolute; top:-1px; bottom:-1px; background:rgba(110,143,69,0.35); border-left:1px solid var(--leaf); border-right:1px solid var(--leaf); }
+.dial-mark{
+  position:absolute; top:-4px; width:2px; height:16px; background:var(--soil-deep);
+}
+.dial-mark::after{
+  content:""; position:absolute; top:-5px; left:50%; transform:translateX(-50%);
+  width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-top:5px solid var(--soil-deep);
+}
+.dial-legend{ display:flex; justify-content:space-between; font-size:8px; color:var(--ink-soft); margin-top:4px; }
+
+.remark{ font-size:9.5px; font-weight:700; letter-spacing:0.3px; padding:3px 8px; border-radius:20px; display:inline-block; white-space:nowrap; }
+.remark.within{ background:#E6EFD8; color:#3E5B24; }
+.remark.above{ background:#FBEADB; color:#8A5A21; }
+.remark.below{ background:#FBEADB; color:#8A5A21; }
+.remark.combined{ background:#EAE6F2; color:#4B3B6E; }
+
+.table-foot{
+  font-size:9.5px; color:var(--ink-soft); line-height:1.6; padding:12px 14px; background:#F8F7EF; border-top:1px solid var(--line);
+}
+.table-foot b{ color:var(--soil-deep); }
+
+/* ---------- seal + signature ---------- */
+.certify{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:22px 46px 10px 46px; margin-top:6px;
+}
+.seal{
+  width:96px; height:96px; border-radius:50%;
+  border:3px solid var(--gold);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; position:relative; flex:none;
+  background:radial-gradient(circle, #fff 60%, var(--leaf-soft) 100%);
+}
+.seal::before{
+  content:""; position:absolute; inset:6px; border:1px dashed var(--soil); border-radius:50%;
+}
+.seal .s1{ font-family:'Lora', serif; font-size:10px; color:var(--forest); font-weight:700; letter-spacing:0.5px; }
+.seal .s2{ font-size:8px; color:var(--soil); letter-spacing:1px; margin-top:2px; }
+.sign-block{ text-align:right; }
+.sign-block .line{ width:190px; border-bottom:1px solid var(--ink-soft); margin-bottom:6px; margin-left:auto; }
+.sign-block .who{ font-size:12px; font-weight:600; color:var(--ink); }
+.sign-block .role{ font-size:10.5px; color:var(--ink-soft); }
+
+/* ---------- disclaimer ---------- */
+.disclaimer{
+  margin:26px 46px 0 46px;
+  background:#FBF6EA;
+  border:1px solid var(--gold);
+  border-left:4px solid var(--soil);
+  border-radius:8px;
+  padding:16px 20px;
+  font-size:11px;
+  line-height:1.6;
+  color:var(--soil-deep);
+}
+.disclaimer b{ color:var(--forest); }
+
+/* ---------- footer ---------- */
+.footer{
+  margin-top:24px; padding:18px 46px 30px 46px;
+  display:flex; justify-content:space-between; align-items:center;
+  border-top:1px solid var(--line);
+  font-size:10.5px; color:var(--ink-soft);
+}
+.footer .brandfoot{ color:var(--forest); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="header">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 20C4 20 3 11 9 6C15 1 21 3 21 3C21 3 22 10 17 15C12 20 4 20 4 20Z" fill="#1E3B2A"/>
+<path d="M4 20C8 16 12 12 20 4" stroke="#DCE6CC" stroke-width="1.4" stroke-linecap="round"/>
+</svg></div>
+      <div>
+        <div class="brand-name">BioLink Agritech Solutions</div>
+        <div class="brand-sub">Farm Input Quality &amp; Traceability</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="site">biolinkagri.in</div>
+      <div class="tag">Factory-direct organic inputs, lab verified</div>
+    </div>
+  </div>
+
+  <div class="title-block">
+    <div class="eyebrow">Input Quality Summary</div>
+    <div class="title">FOM &mdash; Fermented Organic Manure &nbsp;<span>&mdash; Test Result Overview</span></div>
+    <div class="meta-row">
+      <div class="meta-item"><div class="k">Summary Ref.</div><div class="v">BLK/EQ-02/2025</div></div>
+      <div class="meta-item"><div class="k">Original Lab Ref.</div><div class="v">EL/RJK/2511058</div></div>
+      <div class="meta-item"><div class="k">Date Issued</div><div class="v">24 Nov 2025</div></div>
+      <div class="meta-item"><div class="k">Sample Condition</div><div class="v">Satisfactory</div></div>
+    </div>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-head"><div class="dot"></div><h3>Sample Details</h3></div>
+      <div class="info-row"><div class="k">Sample Name</div><div class="v">FOM &mdash; Fermented Organic Manure</div></div>
+      <div class="info-row"><div class="k">Sample Provided By</div><div class="v">Customer</div></div>
+      <div class="info-row"><div class="k">Sample Quantity</div><div class="v">200 g (approx.)</div></div>
+      <div class="info-row"><div class="k">Testing Period</div><div class="v">15 Nov &ndash; 22 Nov 2025</div></div>
+      <div class="info-row"><div class="k">Issued For</div><div class="v">BioLink Farmer Network</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div class="dot"></div><h3>Testing Laboratory</h3></div>
+      <div class="info-row"><div class="k">Testing Agency</div><div class="v">Equity Food Testing Laboratories Pvt. Ltd.</div></div>
+      <div class="info-row"><div class="k">Test Discipline</div><div class="v">Chemical</div></div>
+      <div class="info-row"><div class="k">Method Reference</div><div class="v">FCO 1985 methods</div></div>
+      <div class="info-row"><div class="k">Tested By</div><div class="v">Ayush (Lab Analyst)</div></div>
+      <div class="info-row"><div class="k">Lab Location</div><div class="v">Rajkot, Gujarat</div></div>
+    </div>
+  </div>
+
+  <div class="profile">
+    <div class="profile-head">
+      <h3>Nutrient &amp; Quality Profile</h3>
+      <div class="note">Bars scaled to each parameter's own measurement range, for at-a-glance reading only</div>
+    </div>
+    
+    <div class="bar-row">
+      <div class="bar-label-row">
+        <span class="name">pH</span>
+        <span class="method">FCO 1985</span>
+        <span class="val">7.32</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:52.3%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label-row">
+        <span class="name">Moisture</span>
+        <span class="method">FCO 1985</span>
+        <span class="val">34.66 %</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:34.66%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label-row">
+        <span class="name">Organic Carbon</span>
+        <span class="method">FCO 1985</span>
+        <span class="val">32.6 %</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:32.6%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label-row">
+        <span class="name">C:N Ratio</span>
+        <span class="method">FCO 1985</span>
+        <span class="val">26.08</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:65.2%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label-row">
+        <span class="name">Total Nitrogen</span>
+        <span class="method">FCO 1985</span>
+        <span class="val">1.25 %</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:25.0%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label-row">
+        <span class="name">Total Phosphates (P₂O₅)</span>
+        <span class="method">FCO 1985</span>
+        <span class="val">0.57 %</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:19.0%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label-row">
+        <span class="name">Total Potassium (K₂O)</span>
+        <span class="method">FCO 1985</span>
+        <span class="val">0.54 %</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:18.0%"></div></div>
+    </div>
+  </div>
+
+  <div class="table-section">
+    <div class="table-head">
+      <h3>Certified Analysis Table</h3>
+      <div class="badge">FCO 1985 Referenced</div>
+    </div>
+    <div class="coa-wrap">
+      <table class="coa">
+        <thead>
+          <tr>
+            <th class="num">SI</th>
+            <th>Parameter</th>
+            <th>Result</th>
+            <th>Unit</th>
+            <th>FCO 1985 Reference Range</th>
+            <th>Position in Range</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="num">1</td>
+            <td class="param">pH<span class="method">FCO 1985</span></td>
+            <td class="result">7.32</td>
+            <td>&mdash;</td>
+            <td class="range">6.5 &ndash; 8.4</td>
+            <td class="dial"><div class="dial-track">
+        <div class="dial-band" style="left:46.43%; width:13.57%;"></div>
+        <div class="dial-mark" style="left:52.29%;"></div>
+      </div>
+      <div class="dial-legend"><span>0</span><span>14</span></div></td>
+            <td><span class="remark within">Within range</span></td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td class="param">Moisture<span class="method">FCO 1985</span></td>
+            <td class="result">34.66</td>
+            <td>%</td>
+            <td class="range">30.0 &ndash; 70.0 (max.)</td>
+            <td class="dial"><div class="dial-track">
+        <div class="dial-band" style="left:30.0%; width:40.0%;"></div>
+        <div class="dial-mark" style="left:34.66%;"></div>
+      </div>
+      <div class="dial-legend"><span>0</span><span>100</span></div></td>
+            <td><span class="remark within">Within range</span></td>
+          </tr>
+          <tr>
+            <td class="num">3</td>
+            <td class="param">Organic Carbon (TOC)<span class="method">FCO 1985</span></td>
+            <td class="result">32.6</td>
+            <td>%</td>
+            <td class="range">&ge; 14.0 (min.)</td>
+            <td class="dial"><div class="dial-track">
+        <div class="dial-band" style="left:35.0%; width:65.0%;"></div>
+        <div class="dial-mark" style="left:81.5%;"></div>
+      </div>
+      <div class="dial-legend"><span>0</span><span>40</span></div></td>
+            <td><span class="remark within">Within range</span></td>
+          </tr>
+          <tr>
+            <td class="num">4</td>
+            <td class="param">C:N Ratio<span class="method">FCO 1985</span></td>
+            <td class="result">26.08</td>
+            <td>&mdash;</td>
+            <td class="range">&le; 30.0 (max.)</td>
+            <td class="dial"><div class="dial-track">
+        <div class="dial-band" style="left:0.0%; width:75.0%;"></div>
+        <div class="dial-mark" style="left:65.2%;"></div>
+      </div>
+      <div class="dial-legend"><span>0</span><span>40</span></div></td>
+            <td><span class="remark within">Within range</span></td>
+          </tr>
+          <tr>
+            <td class="num">5</td>
+            <td class="param">Total Nitrogen (N)<span class="method">FCO 1985</span></td>
+            <td class="result">1.25</td>
+            <td>%</td>
+            <td class="range">See combined NPK&sup2;</td>
+            <td class="dial"><div class="dial-track">
+        <div class="dial-band" style="left:0.0%; width:100.0%;"></div>
+        <div class="dial-mark" style="left:41.67%;"></div>
+      </div>
+      <div class="dial-legend"><span>0</span><span>3</span></div></td>
+            <td><span class="remark combined">Counts to combined</span></td>
+          </tr>
+          <tr>
+            <td class="num">6</td>
+            <td class="param">Total Phosphates (P&#8322;O&#8325;)<span class="method">FCO 1985</span></td>
+            <td class="result">0.57</td>
+            <td>%</td>
+            <td class="range">See combined NPK&sup2;</td>
+            <td class="dial"><div class="dial-track">
+        <div class="dial-band" style="left:0.0%; width:100.0%;"></div>
+        <div class="dial-mark" style="left:19.0%;"></div>
+      </div>
+      <div class="dial-legend"><span>0</span><span>3</span></div></td>
+            <td><span class="remark combined">Counts to combined</span></td>
+          </tr>
+          <tr>
+            <td class="num">7</td>
+            <td class="param">Total Potassium (K&#8322;O)<span class="method">FCO 1985</span></td>
+            <td class="result">0.54</td>
+            <td>%</td>
+            <td class="range">See combined NPK&sup2;</td>
+            <td class="dial"><div class="dial-track">
+        <div class="dial-band" style="left:0.0%; width:100.0%;"></div>
+        <div class="dial-mark" style="left:18.0%;"></div>
+      </div>
+      <div class="dial-legend"><span>0</span><span>3</span></div></td>
+            <td><span class="remark combined">Counts to combined</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="table-foot">
+        <b>Reference basis:</b> Ranges shown follow the FCO 1985 (as amended) specification for Fermented
+      Organic Manure (FOM), as referenced in public-sector FOM procurement documentation. &sup2; FCO sets a single
+      <b>combined</b> minimum of N + P&#8322;O&#8325; + K&#8322;O &ge; 1.2% by weight (no individual minimum per nutrient);
+      this sample's combined total is <b>2.36%</b>, which is within the combined requirement. Full FCO conformity also
+      requires parameters not covered in this sample's test scope (e.g. particle size, conductivity, pathogens, heavy
+      metals).
+      </div>
+    </div>
+  </div>
+
+  <div class="certify">
+    <div class="seal">
+      <div class="s1">LAB<br>VERIFIED</div>
+      <div class="s2">BIOLINK</div>
+    </div>
+    <div class="sign-block">
+      <div class="line"></div>
+      <div class="who">Authorised Signatory</div>
+      <div class="role">BioLink Agritech Solutions</div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <b>Disclaimer:</b> This certificate is a <b>visual, branded representation</b> of results obtained from an independent
+    third-party laboratory test on the sample described above. It has been prepared by BioLink Agritech Solutions
+    for the customer's easy reference. In line with our sourcing agreements and company policy, the
+    <b>original laboratory test report and manufacturer/source details are retained on file and are not issued directly
+    to the farmer/customer.</b> This summary does not replace, and is not a copy of, the original certified report.
+    FCO reference ranges are shown for general context only and do not constitute an official conformity certification.
+    For any verification or quality query, please contact BioLink Agritech Solutions directly using the details below.
+  </div>
+
+  <div class="footer">
+    <div><span class="brandfoot">BioLink Agritech Solutions</span> &middot; biolinkagri.in</div>
+    <div>Summary generated 24 Aug 2026 &middot; Valid as a reference document only</div>
+  </div>
+
+</div>
+</body>
+</html>

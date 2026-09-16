@@ -4,7 +4,7 @@ const InquirySchema = new mongoose.Schema(
   {
     kind: {
       type: String,
-      enum: ['contact', 'quote_request', 'launch_notify'],
+      enum: ['contact', 'quote_request', 'launch_notify', 'sample_order'],
       required: true,
     },
     name: { type: String, trim: true, maxlength: 120 },
@@ -17,6 +17,9 @@ const InquirySchema = new mongoose.Schema(
     volume: { type: Number, min: 0 },
     pincode: { type: String, trim: true, maxlength: 12 },
     whatsapp: { type: String, trim: true, maxlength: 30 },
+    address: { type: String, trim: true, maxlength: 500 },
+    sampleSize: { type: String, trim: true, maxlength: 20 },
+    intendedUse: { type: String, trim: true, maxlength: 100 },
     quoteId: { type: String, trim: true, maxlength: 60 },
     quoteAmount: { type: Number, min: 0 },
     metadata: { type: mongoose.Schema.Types.Mixed, default: {} },

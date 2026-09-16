@@ -11,6 +11,8 @@ import {
   buildNotifyEmail,
   buildQuoteEmail,
   buildPartnerReferralNotificationEmail,
+  buildSampleOrderEmail,
+  buildSampleOrderAutoReply,
   sendSystemEmail,
 } from '../services/emailService.js';
 import { calculateQuote } from '../utils/quoteEngine.js';
@@ -20,6 +22,7 @@ import {
   quoteCalculationSchema,
   quoteClaimSchema,
   retailNotifySchema,
+  sampleOrderSchema,
   trackingSchema,
 } from '../utils/validators.js';
 
@@ -324,6 +327,64 @@ router.post(
     ]);
 
     res.status(201).json({ message: 'You are on the launch notification list.' });
+  })
+);
+
+router.post(
+  '/sample/order',
+  asyncHandler(async (req, res) => {
+    const payload = sampleOrderSchema.parse(req.body);
+    const sampleRefId = `SMP-${Date.now().toString(36).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`;
+
+    const inquiry = await Inquiry.create({
+      kind: 'sample_order',
+      name: payload.name,
+      email: payload.email,
+      whatsapp: payload.whatsapp,
+      phone: payload.whatsapp,
+      address: payload.address,
+      pincode: payload.pincode,
+      sampleSize: payload.sampleSize,
+      intendedUse: payload.intendedUse,
+      message: payload.notes || '',
+      metadata: {
+        sampleRefId,
+        intendedUseOther: payload.intendedUseOther || '',
+        cropType: payload.cropType || '',
+        submittedAt: new Date().toISOString(),
+      },
+    });
+
+    const emailPayload = {
+      ...payload,
+      sampleRefId,
+    };
+
+    await Promise.allSettled([
+      sendSystemEmail({
+        to: 'info@biolinkagri.in, ekrishakjan@gmail.com',
+        subject: `📦 NEW SAMPLE ORDER: ${payload.sampleSize} (${payload.name} - PIN ${payload.pincode}) [${sampleRefId}]`,
+        html: buildSampleOrderEmail(emailPayload),
+        replyTo: payload.email,
+      }),
+      sendSystemEmail({
+        to: payload.email,
+        subject: `BioLink Bio-Manure Sample Order Confirmed (${sampleRefId})`,
+        html: buildSampleOrderAutoReply(emailPayload),
+      }),
+    ]);
+
+    res.status(201).json({
+      status: 'Success',
+      message: 'Sample order placed successfully! Confirmation receipt dispatched.',
+      sampleRefId,
+      details: {
+        name: payload.name,
+        sampleSize: payload.sampleSize,
+        pincode: payload.pincode,
+        whatsapp: payload.whatsapp,
+      },
+    });
   })
 );
 

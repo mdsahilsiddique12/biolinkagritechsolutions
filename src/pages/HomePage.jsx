@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Truck, Factory, Clock, Shield, Star, ChevronRight, Leaf, Droplets, Beaker, Package, Zap, Globe, ExternalLink, Handshake, Award } from 'lucide-react';
+import { ArrowRight, Truck, Factory, Clock, Shield, Star, ChevronRight, Leaf, Droplets, Beaker, Package, Zap, Globe, ExternalLink, Handshake, Award, Sparkles, CheckCircle2 } from 'lucide-react';
 import ParticleField from '../components/ParticleField';
 import { useScrollReveal, useCountUp } from '../hooks/useAnimations';
 import { testimonials, stats, certifications, supplyHubs } from '../data/testimonials';
@@ -50,8 +50,13 @@ export default function HomePage() {
         <div className="hero__hud-corner hero__hud-corner--br" />
 
         <div className="hero__content container">
-          <div className="hero__badge badge" id="satat-badge" style={{ borderColor: 'var(--neon-cyan)', background: 'rgba(5, 150, 105, 0.08)' }}>
-            <Globe size={12} style={{ color: 'var(--neon-pink)', marginRight: '4px' }} /> Verified SATAT Plant Partner (Govt of India Initiative)
+          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 'var(--space-md)' }}>
+            <div className="hero__badge badge" id="satat-badge" style={{ borderColor: 'var(--neon-cyan)', background: 'rgba(5, 150, 105, 0.08)' }}>
+              <Globe size={12} style={{ color: 'var(--neon-pink)', marginRight: '4px' }} /> Verified SATAT Plant Partner (Govt of India Initiative)
+            </div>
+            <Link to="/sample" className="hero__badge badge" id="sample-badge-hero" style={{ borderColor: 'var(--neon-gold)', background: 'rgba(251, 191, 36, 0.15)', color: 'var(--neon-gold)', textDecoration: 'none', cursor: 'pointer', transition: 'transform 0.2s ease' }}>
+              <Sparkles size={12} style={{ marginRight: '4px' }} /> Order Test Sample Pack (20kg / 30kg / 50kg) →
+            </Link>
           </div>
           
           <h1 className="hero__title">
@@ -68,11 +73,11 @@ export default function HomePage() {
           </p>
 
           <div className="hero__actions">
-            <Link to="/institutional" className="btn btn-primary btn-lg" id="hero-cta-quote">
-              Request Bulk Quote <ArrowRight size={16} />
+            <Link to="/sample" className="btn btn-primary btn-lg" id="hero-cta-sample" style={{ background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none', boxShadow: '0 0 24px rgba(16, 185, 129, 0.4)', gap: '0.6rem' }}>
+              <Package size={18} /> Order Test Sample Bag (20/30/50kg)
             </Link>
-            <Link to="/shop" className="btn btn-outline btn-lg" id="hero-cta-shop">
-              Retail Coming Soon <Clock size={16} />
+            <Link to="/institutional" className="btn btn-outline btn-lg" id="hero-cta-quote">
+              Request Bulk Quote <ArrowRight size={16} />
             </Link>
           </div>
 
@@ -112,6 +117,58 @@ export default function HomePage() {
                 <span className="ticker-coord">{hub.lat}</span>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ FEATURED SAMPLE PROMO SECTION ═══ */}
+      <section className="section sample-promo-section" style={{ padding: 'var(--space-2xl) 0', background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(5, 150, 105, 0.08) 50%, rgba(15, 23, 42, 0.4) 100%)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+        <div className="container">
+          <div className="glass-card" style={{ padding: 'var(--space-2xl)', borderRadius: 'var(--radius-xl)', position: 'relative', overflow: 'hidden', border: '1px solid var(--border-glow)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-xl)', alignItems: 'center' }}>
+              <div>
+                <span className="badge badge-gold" style={{ marginBottom: 'var(--space-sm)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <Sparkles size={12} /> Test Before Commercial Bulk Booking
+                </span>
+                <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 800, margin: '0.4rem 0 1rem 0' }} className="text-glow">
+                  Request BioLink <span className="text-highlight">Sample Testing Packs</span>
+                </h2>
+                <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 'var(--space-lg)' }}>
+                  Test our lab-certified Fermented Organic Manure (FOM) directly on your crops or soil trial plots before committing to full 15-Ton FTL consignments. Available in three custom sizes with doorstep delivery across India.
+                </p>
+
+                <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: 'var(--space-xl)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                    <CheckCircle2 size={18} style={{ color: 'var(--neon-green)' }} /> <strong>20 kg</strong> Trial Bag
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                    <CheckCircle2 size={18} style={{ color: 'var(--neon-green)' }} /> <strong>30 kg</strong> Soil Test Pack
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                    <CheckCircle2 size={18} style={{ color: 'var(--neon-green)' }} /> <strong>50 kg</strong> Commercial Demo Bag
+                  </div>
+                </div>
+
+                <Link to="/sample" className="btn btn-primary btn-lg" style={{ background: 'linear-gradient(135deg, var(--neon-cyan), #0284c7)', color: '#0f172a', fontWeight: 800, border: 'none' }}>
+                  <Package size={18} /> Place Sample Order Now <ArrowRight size={16} />
+                </Link>
+              </div>
+
+              <div style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-lg)', textAlign: 'center' }}>
+                <div style={{ fontSize: '2.8rem', fontWeight: 900, color: 'var(--neon-gold)', lineHeight: 1 }}>
+                  20 / 30 / 50
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.4rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  Kilogram Sample Bags
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.8rem 0 var(--space-md) 0' }}>
+                  Complete with Batch Lab Certificate & NPK Analysis Report attached.
+                </div>
+                <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 'var(--space-sm)', fontSize: '0.8rem', color: 'var(--neon-green)', fontWeight: 600 }}>
+                  ✓ Direct Plant Dispatch in 24-48 Hours
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

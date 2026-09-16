@@ -53,22 +53,6 @@ export async function processReferralAttribution({ farmerName, farmerEmail, farm
       }
     }
 
-    if (!partner || !refCode) return null;
-
-    const farmerMobileKey = farmerMobile || farmerEmail || `mobile-${Date.now()}`;
-
-    // 1. Create active Referral record in MongoDB
-    const referral = await Referral.create({
-      farmerName: farmerName || 'Farmer Client',
-      farmerMobile: farmerMobile || farmerMobileKey,
-      farmerEmail: farmerEmail || '',
-      partnerId: partner._id,
-      referralCodeId: refCode._id,
-      attributedAt: new Date(),
-      attributionSource: 'code',
-      status: 'active',
-    });
-
     // 2. Calculate values
     const mt = Number(volume || 15);
     const gross = Number(grossAmount || mt * 7000 + 14000);
@@ -76,6 +60,24 @@ export async function processReferralAttribution({ farmerName, farmerEmail, farm
     const net = Math.max(0, gross - discount);
     const commission = mt * 300;
     const orderNum = `ORD-${Date.now().toString().slice(-6)}`;
+
+    // 3. Create active Referral record in MongoDB
+    const referral = await Referral.create({
+      farmerName: farmerName || 'Farmer Client',
+      farmerMobile: farmerMobile || farmerMobileKey,
+      farmerEmail: farmerEmail || '',
+      partnerId: partner._id,
+      referralCodeId: refCode._id,
+      referralCode: refCode.code || code || 'KJ01',
+      volume: mt,
+      grossAmount: gross,
+      discountAmount: discount,
+      netAmount: net,
+      commissionAmount: commission,
+      attributedAt: new Date(),
+      attributionSource: 'code',
+      status: 'active',
+    });
 
     // 3. Create CommissionLedger entry in MongoDB
     const ledger = await CommissionLedger.create({

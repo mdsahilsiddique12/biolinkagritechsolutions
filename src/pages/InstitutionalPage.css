@@ -57,17 +57,29 @@
   margin-top: 2px;
 }
 
+.inst-calc-section {
+  position: relative;
+  width: 100%;
+  padding: var(--space-2xl) 0 var(--space-3xl);
+  overflow: visible !important;
+}
+
 .quote-calc {
-  max-width: 840px;
+  max-width: 920px;
   width: 100%;
   margin: 0 auto;
-  background: var(--glass-bg, rgba(13, 21, 38, 0.6));
-  backdrop-filter: blur(var(--glass-blur, 16px));
-  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+  background: var(--glass-bg, rgba(13, 21, 38, 0.75));
+  backdrop-filter: blur(var(--glass-blur, 20px));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
   border-radius: var(--radius-xl, 20px);
   padding: 2.5rem;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
   min-height: auto;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  position: relative;
+  z-index: 2;
 }
 
 .quote-calc__form {

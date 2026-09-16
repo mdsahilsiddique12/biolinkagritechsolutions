@@ -183,6 +183,104 @@ export function buildNotifyEmail({ productName }) {
   `;
 }
 
+export function buildSampleOrderEmail({ name, email, whatsapp, address, pincode, sampleSize, intendedUse, intendedUseOther, cropType, notes, sampleRefId }) {
+  const useLabel = intendedUse === 'farming' ? 'Farming / Individual Use'
+    : intendedUse === 'dealership' ? 'Dealership / Retail Distribution'
+    : intendedUse === 'farmer' ? 'Farmer Bulk Trial'
+    : intendedUse === 'partnership' ? 'Partnership / Institutional Trial'
+    : `Other (${intendedUseOther || 'Unspecified'})`;
+
+  return `
+    <div style="font-family: sans-serif; line-height: 1.6; color: #1e293b; max-width: 620px; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; background: #ffffff;">
+      <div style="border-bottom: 2px solid #10b981; padding-bottom: 12px; margin-bottom: 20px;">
+        <h2 style="color: #065f46; margin: 0 0 6px 0;">📦 New Bio-Manure Sample Order Requested</h2>
+        <span style="background: #ecfdf5; color: #047857; font-weight: bold; padding: 4px 10px; border-radius: 6px; font-size: 13px;">Ref: ${sampleRefId}</span>
+      </div>
+      
+      <p>A new customer has submitted a sample order request via <a href="https://biolinkagri.in/sample" style="color: #10b981; font-weight: bold;">biolinkagri.in/sample</a>:</p>
+      
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: #f8fafc; border-radius: 8px; overflow: hidden; font-size: 14px;">
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; color: #64748b; width: 40%;"><strong>Sample Size Selected:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #047857; font-size: 15px;">${sampleSize} Bag</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Customer Name:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>WhatsApp Number:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #0284c7;">${whatsapp}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Email Address:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0;">${email}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Intended Usage:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${useLabel}</td>
+        </tr>
+        ${cropType ? `
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Crop / Soil Focus:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0;">${cropType}</td>
+        </tr>` : ''}
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>PIN Code:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-weight: bold;">${pincode}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; color: #64748b;"><strong>Complete Address:</strong></td>
+          <td style="padding: 10px 14px; font-weight: 500; line-height: 1.5;">${address}</td>
+        </tr>
+      </table>
+
+      ${notes ? `
+      <div style="background: #fffbebfb; border: 1px solid #fef3c7; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px;">
+        <strong style="color: #b45309; display: block; margin-bottom: 4px;">Customer Notes:</strong>
+        <p style="margin: 0; color: #78350f; font-size: 14px;">${notes}</p>
+      </div>` : ''}
+
+      <p style="font-size: 13px; color: #64748b; margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+        ⚡ BioLink Agritech Sample Dispatch Protocol &bull; Dispatch verification required within 24 hours.
+      </p>
+    </div>
+  `;
+}
+
+export function buildSampleOrderAutoReply({ name, sampleSize, address, pincode, sampleRefId }) {
+  return `
+    <div style="font-family: sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; background: #ffffff;">
+      <div style="border-bottom: 2px solid #10b981; padding-bottom: 12px; margin-bottom: 20px;">
+        <h2 style="color: #065f46; margin: 0 0 4px 0;">Sample Order Request Confirmed! 🌱</h2>
+        <span style="color: #64748b; font-size: 14px;">Ref ID: <strong>${sampleRefId}</strong></span>
+      </div>
+
+      <p>Dear <strong>${name}</strong>,</p>
+      <p>Thank you for placing your sample order for <strong>BioLink Fermented Organic Manure (FOM) — ${sampleSize} Bag</strong>.</p>
+      
+      <p>Your request has been logged into our regional facility queue. Our dispatch team is reviewing your delivery destination:</p>
+
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin: 20px 0; font-size: 14px;">
+        <p style="margin: 0 0 6px 0;"><strong>Selected Size:</strong> ${sampleSize} Test Pack</p>
+        <p style="margin: 0 0 6px 0;"><strong>Destination PIN Code:</strong> ${pincode}</p>
+        <p style="margin: 0;"><strong>Delivery Address:</strong> ${address}</p>
+      </div>
+
+      <p style="background: #ecfdf5; color: #065f46; padding: 12px; border-radius: 8px; border-left: 4px solid #10b981; font-size: 14px; margin-bottom: 20px;">
+        <strong>Next Steps:</strong> Our team will reach out via WhatsApp at your provided mobile number within 24 hours to confirm dispatch and courier tracking link.
+      </p>
+
+      <p>If you have any urgent queries or custom bulk requirements (15 MT+), feel free to reply directly to this email or reach us on WhatsApp at <strong>+91 9006847527</strong>.</p>
+
+      <p style="margin-top: 24px;">Warm regards,<br>
+      <strong>Sahil Siddique</strong><br>
+      Founder & MD, BioLink Agritech Solutions<br>
+      <a href="https://biolinkagri.in" style="color: #10b981; text-decoration: none;">biolinkagri.in</a></p>
+    </div>
+  `;
+}
+
 export function buildBuyerReceipt({ buyerName, listing, quantityTons, order }) {
   return `
     <div style="font-family: sans-serif; line-height: 1.6; color: #2d3748; max-width: 600px;">

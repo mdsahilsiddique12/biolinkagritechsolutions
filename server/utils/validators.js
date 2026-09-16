@@ -51,6 +51,20 @@ export const retailNotifySchema = z.object({
   website: z.string().max(0).optional(),
 });
 
+export const sampleOrderSchema = z.object({
+  name: z.string().trim().min(2, { message: 'Please enter your full name' }).max(120),
+  email: z.email({ message: 'Please enter a valid email address' }).max(180),
+  whatsapp: z.string().trim().min(7, { message: 'Please enter a valid WhatsApp number' }).max(30),
+  address: z.string().trim().min(10, { message: 'Please enter your complete delivery address' }).max(400),
+  pincode: z.string().trim().regex(pincodeRegex, { message: 'Please enter a valid 6-digit Indian PIN code' }),
+  sampleSize: z.enum(['20kg', '30kg', '50kg'], { message: 'Please select a sample size (20kg, 30kg, or 50kg)' }),
+  intendedUse: z.enum(['farming', 'dealership', 'farmer', 'partnership', 'other'], { message: 'Please select intended use' }),
+  intendedUseOther: z.string().trim().max(200).optional().or(z.literal('')),
+  cropType: z.string().trim().max(120).optional().or(z.literal('')),
+  notes: z.string().trim().max(1000).optional().or(z.literal('')),
+  website: z.string().max(0).optional(), // Honeypot anti-bot
+});
+
 export const trackingSchema = z.object({
   trackingId: z.string().trim().min(6).max(40),
 });

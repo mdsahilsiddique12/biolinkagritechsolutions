@@ -15,6 +15,7 @@ import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import LabReportsPage from './pages/LabReportsPage';
 import NurseryGuidePage from './pages/NurseryGuidePage';
+import SampleOrderPage from './pages/SampleOrderPage';
 import { AuthProvider } from './context/AuthContext';
 import { PartnerAuthProvider } from './context/PartnerAuthContext';
 
@@ -33,6 +34,9 @@ function AppContent() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/sample" element={<SampleOrderPage />} />
+        <Route path="/sample-order" element={<SampleOrderPage />} />
+        <Route path="/samples" element={<SampleOrderPage />} />
         <Route path="/institutional" element={<InstitutionalPage />} />
         <Route path="/shop" element={<RetailShopPage />} />
         <Route path="/logistics" element={<LogisticsPage />} />

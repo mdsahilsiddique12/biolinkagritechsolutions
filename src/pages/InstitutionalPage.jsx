@@ -426,109 +426,127 @@ function QuoteCalculator() {
       )}
 
       {step === 'capture' && (
-        <div className="quote-calc__capture">
-          <div className="modal-overlay" onClick={() => setStep('form')}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <button className="modal-close" onClick={() => setStep('form')}>x</button>
-              <div className="quote-calc__capture-icon">
-                <CheckCircle size={32} />
+        <div className="quote-calc__capture" style={{ width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div className="quote-calc__capture-icon" style={{ margin: 0 }}>
+                <CheckCircle size={28} />
               </div>
-              <h3 className="quote-calc__capture-title">Quote Ready!</h3>
-              <p className="quote-calc__capture-desc">
-                Your custom wholesale quotation for <strong>{formData.volume} MT</strong> has been calculated.
-                Enter your details below to unlock the full pricing breakdown.
-              </p>
-              {quotePreview ? (
-                <div className="quote-calc__summary glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '16px', borderRadius: '8px', background: 'rgba(5, 150, 105, 0.03)', border: '1px solid var(--border-subtle)', textAlign: 'left', marginBottom: '16px' }}>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Price of Manure (Base): <strong style={{ color: 'var(--text-primary)' }}>Rs. {quotePreview.manureCost.toLocaleString('en-IN')}</strong></p>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Delivery Charges (Freight): <strong style={{ color: 'var(--text-primary)' }}>Rs. {quotePreview.freightCost.toLocaleString('en-IN')}</strong></p>
-                  
-                  {quoteReferral && quoteReferral.discountAmount > 0 ? (
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--neon-green, #34d399)', background: 'rgba(16, 185, 129, 0.08)', padding: '4px 8px', borderRadius: '6px' }}>
-                      🎁 Referral Discount ({quoteReferral.partnerName}): <strong>− Rs. {quoteReferral.discountAmount.toLocaleString('en-IN')}</strong>
-                    </p>
-                  ) : null}
+              <div>
+                <h3 className="quote-calc__capture-title" style={{ textAlign: 'left', margin: 0, fontSize: '1.4rem' }}>Quote Calculated!</h3>
+                <p className="quote-calc__capture-desc" style={{ textAlign: 'left', margin: 0, fontSize: '0.88rem' }}>
+                  Custom wholesale quotation for <strong>{formData.volume} MT</strong> delivered to pincode <strong>{formData.pincode}</strong>.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => setStep('form')}
+              style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
+            >
+              &larr; Recalculate
+            </button>
+          </div>
 
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', marginTop: '4px' }}>Delivered Price Per Ton: <strong style={{ color: 'var(--neon-green)' }}>Rs. {quotePreview.pricePerTon.toLocaleString('en-IN')} / MT</strong></p>
-                  <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)', fontWeight: 'bold' }}>
-                    Total Estimate: <strong>Rs. {(quoteReferral?.finalTotal ?? quotePreview.total).toLocaleString('en-IN')}</strong>
-                  </p>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', lineHeight: '1.4', marginTop: '4px' }}>
-                    *All values are estimated and subject to change based on dynamic freight rates at the time of dispatch.
-                  </span>
+          {quotePreview ? (
+            <div className="quote-calc__summary glass-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', padding: '1.5rem', borderRadius: '14px', background: 'rgba(5, 150, 105, 0.06)', border: '1px solid rgba(16, 185, 129, 0.3)', marginBottom: '1.5rem', textAlign: 'left', overflow: 'visible' }}>
+              <div>
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.2rem' }}>Price of Manure (Base)</span>
+                <strong style={{ fontSize: '1.2rem', color: 'var(--text-primary)' }}>Rs. {quotePreview.manureCost.toLocaleString('en-IN')}</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.2rem' }}>Delivery Charges (Freight)</span>
+                <strong style={{ fontSize: '1.2rem', color: 'var(--text-primary)' }}>Rs. {quotePreview.freightCost.toLocaleString('en-IN')}</strong>
+              </div>
+              {quoteReferral && quoteReferral.discountAmount > 0 ? (
+                <div>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--neon-green, #34d399)', display: 'block', marginBottom: '0.2rem' }}>🎁 Partner Referral Discount ({quoteReferral.partnerName})</span>
+                  <strong style={{ fontSize: '1.2rem', color: 'var(--neon-green, #34d399)' }}>− Rs. {quoteReferral.discountAmount.toLocaleString('en-IN')}</strong>
                 </div>
               ) : null}
-              <form onSubmit={handleLeadSubmit}>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">Full Name</label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="Your name"
-                    value={leadData.name}
-                    onChange={(e) => setLeadData({ ...leadData, name: e.target.value })}
-                    id="lead-name"
-                    required
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">Corporate Email</label>
-                  <input
-                    type="email"
-                    className="input-field"
-                    placeholder="you@company.com"
-                    value={leadData.email}
-                    onChange={(e) => setLeadData({ ...leadData, email: e.target.value })}
-                    id="lead-email"
-                    required
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: '1rem' }}>
-                  <label className="form-label">Company</label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="Company / farm / estate name"
-                    value={leadData.company}
-                    onChange={(e) => setLeadData({ ...leadData, company: e.target.value })}
-                    id="lead-company"
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                  <label className="form-label">WhatsApp Number</label>
-                  <input
-                    type="tel"
-                    className="input-field"
-                    placeholder="+91 XXXXX XXXXX"
-                    value={leadData.whatsapp}
-                    onChange={(e) => setLeadData({ ...leadData, whatsapp: e.target.value })}
-                    id="lead-whatsapp"
-                    required
-                  />
-                </div>
-
-                {/* T&C + Privacy Policy Checkbox */}
-                <div className="form-group checkbox-group" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '8px', marginBottom: 'var(--space-md)' }}>
-                  <input
-                    type="checkbox"
-                    id="lead-terms"
-                    required
-                    checked={leadTerms}
-                    onChange={(e) => setLeadTerms(e.target.checked)}
-                    style={{ marginTop: '4px', cursor: 'pointer' }}
-                  />
-                  <label htmlFor="lead-terms" className="form-label" style={{ fontSize: '0.78rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
-                    I agree to the <a href="/terms" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Terms &amp; Conditions</a> and <a href="/privacy" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Privacy Policy</a>
-                  </label>
-                </div>
-
-                {error ? <p className="form-error">{error}</p> : null}
-                <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }} id="lead-submit">
-                  {claimLabel} <ArrowRight size={16} />
-                </button>
-              </form>
+              <div>
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.2rem' }}>Delivered Price Per Ton</span>
+                <strong style={{ fontSize: '1.2rem', color: 'var(--neon-green)' }}>Rs. {quotePreview.pricePerTon.toLocaleString('en-IN')} / MT</strong>
+              </div>
+              <div style={{ gridColumn: '1 / -1', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.1rem', color: 'var(--text-primary)', fontWeight: '600' }}>Total All-Inclusive Delivered Amount:</span>
+                <strong style={{ fontSize: '1.5rem', color: 'var(--neon-green)', fontWeight: 'bold' }}>
+                  Rs. {(quoteReferral?.finalTotal ?? quotePreview.total).toLocaleString('en-IN')}
+                </strong>
+              </div>
             </div>
-          </div>
+          ) : null}
+
+          <form onSubmit={handleLeadSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+            <div className="form-group">
+              <label className="form-label">Full Name *</label>
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Your full name"
+                value={leadData.name}
+                onChange={(e) => setLeadData({ ...leadData, name: e.target.value })}
+                id="lead-name"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Corporate / Personal Email *</label>
+              <input
+                type="email"
+                className="input-field"
+                placeholder="you@company.com"
+                value={leadData.email}
+                onChange={(e) => setLeadData({ ...leadData, email: e.target.value })}
+                id="lead-email"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Company / Estate Name</label>
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Company or farm name"
+                value={leadData.company}
+                onChange={(e) => setLeadData({ ...leadData, company: e.target.value })}
+                id="lead-company"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">WhatsApp Number (+91) *</label>
+              <input
+                type="tel"
+                className="input-field"
+                placeholder="+91 XXXXX XXXXX"
+                value={leadData.whatsapp}
+                onChange={(e) => setLeadData({ ...leadData, whatsapp: e.target.value })}
+                id="lead-whatsapp"
+                required
+              />
+            </div>
+
+            {/* T&C + Privacy Policy Checkbox */}
+            <div className="form-group checkbox-group" style={{ gridColumn: '1 / -1', flexDirection: 'row', alignItems: 'flex-start', gap: '8px', margin: '0.25rem 0' }}>
+              <input
+                type="checkbox"
+                id="lead-terms"
+                required
+                checked={leadTerms}
+                onChange={(e) => setLeadTerms(e.target.checked)}
+                style={{ marginTop: '4px', cursor: 'pointer' }}
+              />
+              <label htmlFor="lead-terms" className="form-label" style={{ fontSize: '0.78rem', textTransform: 'none', letterSpacing: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                I agree to the <a href="/terms" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Terms &amp; Conditions</a> and <a href="/privacy" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>Privacy Policy</a>
+              </label>
+            </div>
+
+            {error ? <p className="form-error" style={{ gridColumn: '1 / -1' }}>{error}</p> : null}
+            <button type="submit" className="btn btn-primary btn-lg" style={{ gridColumn: '1 / -1', width: '100%' }} id="lead-submit">
+              {claimLabel} <ArrowRight size={16} />
+            </button>
+          </form>
         </div>
       )}
 
@@ -573,8 +591,8 @@ export default function InstitutionalPage() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
+      <section className="section inst-calc-section" id="quote-calculator-section" style={{ overflow: 'visible', position: 'relative', zIndex: 2 }}>
+        <div className="container" style={{ overflow: 'visible' }}>
           <QuoteCalculator />
         </div>
       </section>

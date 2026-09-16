@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Zap, LogOut, User } from 'lucide-react';
+import { Menu, X, Zap, LogOut, User, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
@@ -22,6 +22,7 @@ export default function Navbar() {
 
   const navLinks = [
     { to: '/', label: 'Home' },
+    { to: '/sample', label: 'Order Sample' },
     { to: '/institutional', label: 'Institutional' },
     { to: '/shop', label: 'Coming Soon' },
     { to: '/help', label: 'Help' },
@@ -73,10 +74,13 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <Link to="/login" className="btn btn-outline navbar__login-btn" id="nav-login-btn" style={{ marginRight: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+            <Link to="/login" className="btn btn-outline navbar__login-btn" id="nav-login-btn" style={{ marginRight: '0.4rem', padding: '0.5rem 0.8rem', fontSize: '0.85rem' }}>
               Portal Login
             </Link>
           )}
+          <Link to="/sample" className="btn btn-outline navbar__sample-btn" id="nav-sample-btn" style={{ marginRight: '0.4rem', padding: '0.5rem 0.9rem', fontSize: '0.85rem', borderColor: 'var(--neon-gold)', color: 'var(--neon-gold)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Sparkles size={13} /> Order Sample
+          </Link>
           <Link to="/institutional" className="btn btn-primary navbar__cta" id="nav-quote-btn">
             Get Bulk Quote
           </Link>
