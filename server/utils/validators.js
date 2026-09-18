@@ -65,6 +65,18 @@ export const sampleOrderSchema = z.object({
   website: z.string().max(0).optional(), // Honeypot anti-bot
 });
 
+export const seaBuckthornSampleSchema = z.object({
+  companyName: z.string().trim().min(2, { message: 'Please enter your company or brand name' }).max(140),
+  name: z.string().trim().min(2, { message: 'Please enter your contact name' }).max(120),
+  email: z.email({ message: 'Please enter a valid email address' }).max(180),
+  whatsapp: z.string().trim().min(7, { message: 'Please enter a valid WhatsApp number' }).max(30),
+  requiredFormat: z.string().trim().min(2).max(100),
+  monthlyVolume: z.string().trim().min(2).max(100),
+  pincode: z.string().trim().max(10).optional().or(z.literal('')),
+  notes: z.string().trim().max(1000).optional().or(z.literal('')),
+  website: z.string().max(0).optional(),
+});
+
 export const trackingSchema = z.object({
   trackingId: z.string().trim().min(6).max(40),
 });

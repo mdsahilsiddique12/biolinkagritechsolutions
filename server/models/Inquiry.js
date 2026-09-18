@@ -4,7 +4,7 @@ const InquirySchema = new mongoose.Schema(
   {
     kind: {
       type: String,
-      enum: ['contact', 'quote_request', 'launch_notify', 'sample_order'],
+      enum: ['contact', 'quote_request', 'launch_notify', 'sample_order', 'sea_buckthorn_sample'],
       required: true,
     },
     name: { type: String, trim: true, maxlength: 120 },

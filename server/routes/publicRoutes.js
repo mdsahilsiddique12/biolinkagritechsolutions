@@ -13,6 +13,8 @@ import {
   buildPartnerReferralNotificationEmail,
   buildSampleOrderEmail,
   buildSampleOrderAutoReply,
+  buildSeaBuckthornSampleEmail,
+  buildSeaBuckthornSampleAutoReply,
   sendSystemEmail,
 } from '../services/emailService.js';
 import { calculateQuote } from '../utils/quoteEngine.js';
@@ -23,6 +25,7 @@ import {
   quoteClaimSchema,
   retailNotifySchema,
   sampleOrderSchema,
+  seaBuckthornSampleSchema,
   trackingSchema,
 } from '../utils/validators.js';
 
@@ -391,6 +394,70 @@ router.post(
         sampleSize: payload.sampleSize,
         pincode: payload.pincode,
         whatsapp: payload.whatsapp,
+      },
+    });
+  })
+);
+
+router.post(
+  '/sample/sea-buckthorn',
+  asyncHandler(async (req, res) => {
+    const payload = seaBuckthornSampleSchema.parse(req.body);
+
+    const count = await Inquiry.countDocuments({ kind: 'sea_buckthorn_sample' });
+    const orderSeq = String(count + 1001).padStart(5, '0');
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const sampleRefId = `SBT-${yyyy}${mm}${dd}-${orderSeq}`;
+
+    await Inquiry.create({
+      kind: 'sea_buckthorn_sample',
+      name: payload.name,
+      email: payload.email,
+      whatsapp: payload.whatsapp,
+      phone: payload.whatsapp,
+      enquiryType: 'Sea Buckthorn B2B Advance Sample',
+      pincode: payload.pincode || '',
+      message: payload.notes || '',
+      metadata: {
+        sampleRefId,
+        companyName: payload.companyName,
+        requiredFormat: payload.requiredFormat,
+        monthlyVolume: payload.monthlyVolume,
+        submittedAt: new Date().toISOString(),
+      },
+    });
+
+    const emailPayload = {
+      ...payload,
+      sampleRefId,
+    };
+
+    await Promise.allSettled([
+      sendSystemEmail({
+        to: 'info@biolinkagri.in, ekrishakjan@gmail.com',
+        subject: `🫐 ADVANCE SEA BUCKTHORN LEAD: ${payload.companyName} (${payload.requiredFormat}) [${sampleRefId}]`,
+        html: buildSeaBuckthornSampleEmail(emailPayload),
+        replyTo: payload.email,
+      }),
+      sendSystemEmail({
+        to: payload.email,
+        subject: `BioLink Himalayan Sea Buckthorn Advance Sample Request (${sampleRefId})`,
+        html: buildSeaBuckthornSampleAutoReply(emailPayload),
+      }),
+    ]);
+
+    res.status(201).json({
+      status: 'Success',
+      message: 'Advance lab sample request registered! Confirmation receipt dispatched.',
+      sampleRefId,
+      details: {
+        companyName: payload.companyName,
+        name: payload.name,
+        requiredFormat: payload.requiredFormat,
+        monthlyVolume: payload.monthlyVolume,
       },
     });
   })

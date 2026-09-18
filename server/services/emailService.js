@@ -281,6 +281,94 @@ export function buildSampleOrderAutoReply({ name, sampleSize, address, pincode, 
   `;
 }
 
+export function buildSeaBuckthornSampleEmail({ companyName, name, email, whatsapp, requiredFormat, monthlyVolume, pincode, notes, sampleRefId }) {
+  return `
+    <div style="font-family: sans-serif; line-height: 1.6; color: #1e293b; max-width: 620px; border: 1px solid #fed7aa; border-radius: 12px; padding: 24px; background: #ffffff;">
+      <div style="border-bottom: 2px solid #ea580c; padding-bottom: 12px; margin-bottom: 20px;">
+        <h2 style="color: #c2410c; margin: 0 0 6px 0;">🫐 Advance Sea Buckthorn Lab Sample Lead</h2>
+        <span style="background: #fff7ed; color: #9a3412; font-weight: bold; padding: 4px 10px; border-radius: 6px; font-size: 13px;">Ref: ${sampleRefId}</span>
+      </div>
+      
+      <p>A new B2B client has requested advance pilot samples for Himalayan Sea Buckthorn Extracts:</p>
+      
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: #fff7ed; border-radius: 8px; overflow: hidden; font-size: 14px;">
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; color: #9a3412; width: 42%;"><strong>Company / Brand Name:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; font-weight: bold; color: #7c2d12; font-size: 15px;">${companyName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; color: #9a3412;"><strong>Contact Person:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; font-weight: bold;">${name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; color: #9a3412;"><strong>WhatsApp Mobile:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; font-weight: bold; color: #0284c7;">${whatsapp}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; color: #9a3412;"><strong>Email Address:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5;">${email}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; color: #9a3412;"><strong>Required Format:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; font-weight: 700; color: #ea580c;">${requiredFormat}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; color: #9a3412;"><strong>Est. Monthly Volume:</strong></td>
+          <td style="padding: 10px 14px; border-bottom: 1px solid #ffedd5; font-weight: 700;">${monthlyVolume}</td>
+        </tr>
+        ${pincode ? `
+        <tr>
+          <td style="padding: 10px 14px; color: #9a3412;"><strong>Destination PIN Code:</strong></td>
+          <td style="padding: 10px 14px; font-weight: bold;">${pincode}</td>
+        </tr>` : ''}
+      </table>
+
+      ${notes ? `
+      <div style="background: #fffbebfb; border: 1px solid #fef3c7; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px;">
+        <strong style="color: #b45309; display: block; margin-bottom: 4px;">Formulation / Specific Requirements:</strong>
+        <p style="margin: 0; color: #78350f; font-size: 14px;">${notes}</p>
+      </div>` : ''}
+
+      <p style="font-size: 13px; color: #9a3412; margin-top: 24px; border-top: 1px solid #ffedd5; padding-top: 12px;">
+        🌟 Himalayan Sea Buckthorn B2B Sourcing Protocol &bull; Leh/Himachal Cluster Direct Batch.
+      </p>
+    </div>
+  `;
+}
+
+export function buildSeaBuckthornSampleAutoReply({ companyName, name, requiredFormat, sampleRefId }) {
+  return `
+    <div style="font-family: sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; border: 1px solid #fed7aa; border-radius: 12px; padding: 24px; background: #ffffff;">
+      <div style="border-bottom: 2px solid #ea580c; padding-bottom: 12px; margin-bottom: 20px;">
+        <h2 style="color: #c2410c; margin: 0 0 4px 0;">Advance Lab Sample Registered! 🫐</h2>
+        <span style="color: #9a3412; font-size: 14px;">Ref ID: <strong>${sampleRefId}</strong></span>
+      </div>
+
+      <p>Dear <strong>${name}</strong> (${companyName}),</p>
+      <p>Thank you for expressing interest in BioLink Agritech's upcoming <strong>Himalayan Sea Buckthorn Extract B2B Pilot Sourcing Program</strong>.</p>
+      
+      <p>Your advance sample request for <strong>${requiredFormat}</strong> has been prioritised in our Leh-Ladakh &amp; Lahaul-Spiti extraction scheduling queue.</p>
+
+      <div style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 8px; padding: 16px; margin: 20px 0; font-size: 14px;">
+        <p style="margin: 0 0 6px 0;"><strong>Company:</strong> ${companyName}</p>
+        <p style="margin: 0 0 6px 0;"><strong>Requested Format:</strong> ${requiredFormat}</p>
+        <p style="margin: 0;"><strong>Target Launch Batch:</strong> October 2026 Procurement Window</p>
+      </div>
+
+      <p style="background: #fff7ed; color: #9a3412; padding: 12px; border-radius: 8px; border-left: 4px solid #ea580c; font-size: 14px; margin-bottom: 20px;">
+        <strong>Next Steps:</strong> Our technical team will send you the preliminary Certificate of Analysis (COA) and reach out via WhatsApp to confirm sample delivery details.
+      </p>
+
+      <p>If you have specific formulation parameters (e.g. Omega-7 purity or CO₂ extraction ratios), feel free to reply directly to this email.</p>
+
+      <p style="margin-top: 24px;">Warm regards,<br>
+      <strong>Sahil Siddique</strong><br>
+      Founder &amp; MD, BioLink Agritech Solutions<br>
+      <a href="https://biolinkagri.in" style="color: #ea580c; text-decoration: none;">biolinkagri.in</a></p>
+    </div>
+  `;
+}
+
 export function buildBuyerReceipt({ buyerName, listing, quantityTons, order }) {
   return `
     <div style="font-family: sans-serif; line-height: 1.6; color: #2d3748; max-width: 600px;">
